@@ -1,0 +1,330 @@
+.timetableManagement {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .title {
+  color: hsl(220, 5%, 95%);
+}
+
+.primaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(220, 5%, 95%);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background-color: hsl(220, 85%, 20%);
+  transform: translateY(-1px);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .filterLabel {
+  color: hsl(220, 5%, 95%);
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: hsl(220, 5%, 98%);
+  color: hsl(220, 15%, 15%);
+  cursor: pointer;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: hsl(220, 85%, 15%);
+  box-shadow: 0 0 0 3px hsla(220, 85%, 15%, 0.1);
+}
+
+.dark .filterSelect {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.timetableContainer {
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 92%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dark .timetableContainer {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 22%);
+}
+
+.timetableHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.dark .timetableHeader {
+  background-color: hsl(220, 10%, 16%);
+  color: hsl(220, 5%, 95%);
+}
+
+.timetableGrid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+}
+
+.columnHeader {
+  padding: 12px 16px;
+  background-color: hsl(220, 10%, 90%);
+  color: hsl(220, 15%, 15%);
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+}
+
+.dark .columnHeader {
+  background-color: hsl(220, 10%, 14%);
+  color: hsl(220, 5%, 95%);
+  border-bottom-color: hsl(220, 10%, 18%);
+}
+
+.timeColumn {
+  border-right: 1px solid hsl(220, 10%, 88%);
+}
+
+.dark .timeColumn {
+  border-right-color: hsl(220, 10%, 18%);
+}
+
+.timeSlot {
+  padding: 16px;
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(220, 15%, 45%);
+  text-align: center;
+  background-color: hsl(220, 5%, 98%);
+  min-height: 60px;
+}
+
+.dark .timeSlot {
+  border-bottom-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 65%);
+  background-color: hsl(220, 15%, 8%);
+}
+
+.subjectSlot {
+  padding: 12px 16px;
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.dark .subjectSlot {
+  border-bottom-color: hsl(220, 10%, 18%);
+}
+
+.classSlot {
+  background-color: hsl(220, 5%, 98%);
+}
+
+.dark .classSlot {
+  background-color: hsl(220, 15%, 8%);
+}
+
+.breakSlot {
+  background-color: hsl(35, 85%, 98%);
+}
+
+.dark .breakSlot {
+  background-color: hsl(35, 85%, 8%);
+}
+
+.classContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 16px;
+}
+
+.subjectName {
+  font-weight: 600;
+  color: hsl(220, 15%, 15%);
+  font-size: 14px;
+}
+
+.dark .subjectName {
+  color: hsl(220, 5%, 95%);
+}
+
+.teacherName {
+  font-size: 12px;
+  color: hsl(220, 15%, 45%);
+  margin-top: 2px;
+}
+
+.dark .teacherName {
+  color: hsl(220, 5%, 65%);
+}
+
+.roomNumber {
+  font-size: 12px;
+  color: hsl(220, 15%, 45%);
+  margin-top: 2px;
+}
+
+.dark .roomNumber {
+  color: hsl(220, 5%, 65%);
+}
+
+.breakContent {
+  width: 100%;
+  text-align: center;
+}
+
+.breakText {
+  font-weight: 600;
+  color: hsl(35, 85%, 55%);
+  font-size: 14px;
+}
+
+.dark .breakText {
+  color: hsl(35, 85%, 70%);
+}
+
+.slotActions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.classSlot:hover .slotActions {
+  opacity: 1;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 45%);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: hsl(220, 10%, 80%);
+  color: hsl(220, 15%, 15%);
+}
+
+.actionButton.deleteButton:hover {
+  background-color: hsl(0, 75%, 95%);
+  color: hsl(0, 75%, 55%);
+}
+
+.dark .actionButton {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .actionButton:hover {
+  background-color: hsl(220, 10%, 25%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .actionButton.deleteButton:hover {
+  background-color: hsl(0, 75%, 15%);
+  color: hsl(0, 75%, 65%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .filterGroup {
+    justify-content: space-between;
+  }
+  
+  .timetableGrid {
+    grid-template-columns: 100px 1fr;
+  }
+  
+  .timeSlot {
+    padding: 12px 8px;
+    font-size: 10px;
+  }
+  
+  .subjectSlot {
+    padding: 8px 12px;
+  }
+  
+  .classContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

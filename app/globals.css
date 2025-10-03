@@ -1,0 +1,14 @@
+/* Import base styles */
+@import './styles/base/variables.css';
+@import './styles/base/reset.css';
+@import './styles/base/typography.css';
+@import './styles/base/utilities.css';
+
+/* Import component styles */
+@import './styles/components/button.css';
+@import './styles/components/input.css';
+@import './styles/components/card.css';
+@import './styles/components/form.css';
+@import './styles/components/dialog.css';
+@import './styles/components/dropdown.css';
+@import './styles/components/badge.css';

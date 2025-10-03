@@ -1,0 +1,159 @@
+.dashboardLayout {
+  min-height: 100vh;
+  background-color: hsl(220, 5%, 98%);
+  color: hsl(220, 15%, 15%);
+}
+
+.dashboardLayout.dark {
+  background-color: hsl(220, 15%, 8%);
+  color: hsl(220, 5%, 95%);
+}
+
+.mainContent {
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainContent.sidebarCollapsed {
+  margin-left: 64px;
+}
+
+.header {
+  background-color: hsl(220, 5%, 96%);
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dark .header {
+  background-color: hsl(220, 10%, 12%);
+  border-bottom-color: hsl(220, 10%, 18%);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .pageTitle {
+  color: hsl(220, 5%, 95%);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: hsl(220, 15%, 45%);
+  transition: all 0.2s ease;
+}
+
+.headerButton:hover {
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .headerButton {
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .headerButton:hover {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.userProfile {
+  margin-left: 8px;
+}
+
+.profileButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: hsl(220, 15%, 45%);
+  transition: all 0.2s ease;
+}
+
+.profileButton:hover {
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .profileButton {
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .profileButton:hover {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.profileText {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.content {
+  flex: 1;
+  padding: 24px;
+  background-color: hsl(220, 5%, 98%);
+}
+
+.dark .content {
+  background-color: hsl(220, 15%, 8%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .mainContent.sidebarCollapsed {
+    margin-left: 0;
+  }
+  
+  .header {
+    padding: 16px;
+  }
+  
+  .pageTitle {
+    font-size: 20px;
+  }
+  
+  .content {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,257 @@
+.staffManagement {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .title {
+  color: hsl(220, 5%, 95%);
+}
+
+.primaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(220, 5%, 95%);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background-color: hsl(220, 85%, 20%);
+  transform: translateY(-1px);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: hsl(220, 15%, 45%);
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 12px 12px 44px;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: hsl(220, 5%, 98%);
+  color: hsl(220, 15%, 15%);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: hsl(220, 85%, 15%);
+  box-shadow: 0 0 0 3px hsla(220, 85%, 15%, 0.1);
+}
+
+.dark .searchInput {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.filterSelect {
+  padding: 12px 16px;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: hsl(220, 5%, 98%);
+  color: hsl(220, 15%, 15%);
+  cursor: pointer;
+  min-width: 180px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: hsl(220, 85%, 15%);
+  box-shadow: 0 0 0 3px hsla(220, 85%, 15%, 0.1);
+}
+
+.dark .filterSelect {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.tableContainer {
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 92%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dark .tableContainer {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 22%);
+}
+
+.staffTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.staffTable th,
+.staffTable td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+}
+
+.dark .staffTable th,
+.dark .staffTable td {
+  border-bottom-color: hsl(220, 10%, 18%);
+}
+
+.staffTable th {
+  background-color: hsl(220, 10%, 88%);
+  font-weight: 600;
+  font-size: 14px;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .staffTable th {
+  background-color: hsl(220, 10%, 16%);
+  color: hsl(220, 5%, 95%);
+}
+
+.staffTable tbody tr:hover {
+  background-color: hsl(220, 10%, 94%);
+}
+
+.dark .staffTable tbody tr:hover {
+  background-color: hsl(220, 10%, 16%);
+}
+
+.status {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status.active {
+  background-color: hsl(140, 70%, 95%);
+  color: hsl(140, 70%, 45%);
+}
+
+.dark .status.active {
+  background-color: hsl(140, 70%, 15%);
+  color: hsl(140, 70%, 65%);
+}
+
+.status.inactive {
+  background-color: hsl(0, 75%, 95%);
+  color: hsl(0, 75%, 55%);
+}
+
+.dark .status.inactive {
+  background-color: hsl(0, 75%, 15%);
+  color: hsl(0, 75%, 65%);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 45%);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: hsl(220, 10%, 80%);
+  color: hsl(220, 15%, 15%);
+  transform: translateY(-1px);
+}
+
+.actionButton.deleteButton:hover {
+  background-color: hsl(0, 75%, 95%);
+  color: hsl(0, 75%, 55%);
+}
+
+.dark .actionButton {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .actionButton:hover {
+  background-color: hsl(220, 10%, 25%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .actionButton.deleteButton:hover {
+  background-color: hsl(0, 75%, 15%);
+  color: hsl(0, 75%, 65%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .searchBox {
+    min-width: auto;
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+  }
+  
+  .staffTable {
+    min-width: 800px;
+  }
+}

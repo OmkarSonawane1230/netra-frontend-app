@@ -1,0 +1,331 @@
+.reportsModule {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .title {
+  color: hsl(220, 5%, 95%);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.primaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(220, 5%, 95%);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton:hover {
+  background-color: hsl(220, 85%, 20%);
+  transform: translateY(-1px);
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  background-color: hsl(220, 10%, 80%);
+  transform: translateY(-1px);
+}
+
+.dark .secondaryButton {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .secondaryButton:hover {
+  background-color: hsl(220, 10%, 25%);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filterLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .filterLabel {
+  color: hsl(220, 5%, 95%);
+}
+
+.filterSelect {
+  padding: 8px 12px;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: hsl(220, 5%, 98%);
+  color: hsl(220, 15%, 15%);
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.filterSelect:focus {
+  outline: none;
+  border-color: hsl(220, 85%, 15%);
+  box-shadow: 0 0 0 3px hsla(220, 85%, 15%, 0.1);
+}
+
+.dark .filterSelect {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.iconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  cursor: pointer;
+  color: hsl(220, 15%, 45%);
+  transition: all 0.2s ease;
+}
+
+.iconButton:hover {
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .iconButton {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .iconButton:hover {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.reportCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.reportCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: hsl(220, 5%, 96%);
+  border: 2px solid hsl(220, 10%, 92%);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reportCard:hover {
+  border-color: hsl(220, 85%, 15%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reportCard.active {
+  border-color: hsl(220, 85%, 15%);
+  background-color: hsl(220, 85%, 98%);
+}
+
+.dark .reportCard {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 22%);
+}
+
+.dark .reportCard.active {
+  background-color: hsl(220, 85%, 5%);
+}
+
+.cardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(220, 5%, 95%);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cardContent {
+  flex: 1;
+}
+
+.cardTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .cardTitle {
+  color: hsl(220, 5%, 95%);
+}
+
+.cardDescription {
+  font-size: 14px;
+  color: hsl(220, 15%, 45%);
+  margin: 0;
+}
+
+.dark .cardDescription {
+  color: hsl(220, 5%, 65%);
+}
+
+.dataVisualization {
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 92%);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dark .dataVisualization {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 22%);
+}
+
+.chartContainer {
+  padding: 20px;
+}
+
+.chartTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  color: hsl(220, 15%, 15%);
+  text-transform: capitalize;
+}
+
+.dark .chartTitle {
+  color: hsl(220, 5%, 95%);
+}
+
+.dataTable {
+  overflow-x: auto;
+}
+
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reportTable th,
+.reportTable td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid hsl(220, 10%, 88%);
+}
+
+.dark .reportTable th,
+.dark .reportTable td {
+  border-bottom-color: hsl(220, 10%, 18%);
+}
+
+.reportTable th {
+  background-color: hsl(220, 10%, 88%);
+  font-weight: 600;
+  font-size: 14px;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .reportTable th {
+  background-color: hsl(220, 10%, 16%);
+  color: hsl(220, 5%, 95%);
+}
+
+.reportTable tbody tr:hover {
+  background-color: hsl(220, 10%, 94%);
+}
+
+.dark .reportTable tbody tr:hover {
+  background-color: hsl(220, 10%, 16%);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .headerActions {
+    justify-content: center;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .filterGroup {
+    justify-content: space-between;
+  }
+  
+  .reportCards {
+    grid-template-columns: 1fr;
+  }
+  
+  .reportCard {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+}
