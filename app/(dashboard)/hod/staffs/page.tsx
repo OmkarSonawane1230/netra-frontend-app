@@ -57,14 +57,14 @@ export default function StaffManagement() {
           onClick={() => console.log('Add new staff action triggered')}
           data-testid="button-add-staff"
         >
-          <PlusIcon size={20} />
+          <PlusIcon size={24} />
           Add Staff
         </button>
       </div>
 
       <div className={styles.controls}>
         <div className={styles.searchBox}>
-          <SearchIcon size={20} className={styles.searchIcon} />
+          <SearchIcon size={24} className={styles.searchIcon} />
           <input
             type="text"
             placeholder="Search staff..."

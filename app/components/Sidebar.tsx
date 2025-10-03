@@ -2,7 +2,7 @@
 import { useUI } from "@/app/context/UIContext";
 import styles from '@/app/styles/views/Sidebar.module.css';
 import { Button } from './ui/Button';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter} from 'next/navigation';
 
 import {
   HomeIcon,
@@ -49,18 +49,14 @@ staff: [
 
 export default function Sidebar() {
     const { sidebarCollapsed, toggleSidebar } = useUI();
-    const { activeModule, setActiveModule } = useUI();
-    const pathname = usePathname();
+    const { activeModule, userRole } = useUI();
     const router = useRouter();
-    const role = pathname.split("/")[1] as Role;
-
-    console.log("Active route page: ", role);
 
     const handleToggleSidebar = () => {
         toggleSidebar();
     };
 
-    const navItems = navLinks[role] || [];
+    const navItems = navLinks[userRole as Role] || [];
 
     return (
         <div className={`${styles.sidebar} ${sidebarCollapsed ? styles.collapsed : ''}`}>
@@ -86,7 +82,7 @@ export default function Sidebar() {
                                     data-testid={`nav-${item.path}`}
                                     title={sidebarCollapsed ? item.name : undefined}
                                     icon={<Icon size={24} className={styles.navIcon} />}
-                                    onClick={() => router.push(`/${role}${(item.path.length == 0) ? '' : `/${item.path}`}`)}
+                                    onClick={() => router.push(`/${userRole}${(item.path.length == 0) ? '' : `/${item.path}`}`)}
                                 >
                                     {!sidebarCollapsed && <span className={styles.navLabel}>{item.name}</span>}
                                 </Button>

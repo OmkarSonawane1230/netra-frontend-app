@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
+type Role = 'principal' | 'hod' | 'mentor' | 'staff';
+
 type UIContextType = {
     sidebarCollapsed: boolean;
     toggleSidebar: () => void;
@@ -13,6 +15,8 @@ type UIContextType = {
     isAuthenticated: boolean;
     setIsAuthenticated: (isAuthenticated: boolean) => void;
 
+    userRole: Role | undefined;
+    setUserRole: (userRole: Role | undefined) => void;
 
     // later you can add more states like:
     // theme: "light" | "dark";
@@ -25,16 +29,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const [activeModule, setActiveModule] = useState<string>("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState<Role>();
 
     const router = useRouter();
     const pathname = usePathname();
     // Update active module whenever route changes
     useEffect(() => {
         const segments = pathname?.split('/') || [];
-        const role = segments[1] || 'dashboard';
-        const module = segments[2] || ''; // default to empty string if missing
 
-        setActiveModule(module);
+        setUserRole(segments[1] as Role)
+        setActiveModule(segments[2] || '');
 
         if (!isAuthenticated) {
             console.log('User not authenticated, redirect to login');
@@ -45,7 +49,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
             console.log('User is authenticated');
             router.push('/dashboard'); // or redirect to default
         }
-    }, [pathname, isAuthenticated, router]);
+    }, [pathname, isAuthenticated, router, userRole]);
 
 
     const toggleSidebar = () => setSidebarCollapsed((prev) => !prev);
@@ -59,6 +63,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
                 setActiveModule,
                 isAuthenticated,
                 setIsAuthenticated,
+                userRole,
+                setUserRole
             }}
         >
             {children}

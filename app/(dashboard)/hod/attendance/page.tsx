@@ -35,14 +35,14 @@ export default function AttendanceManagement() {
           onClick={() => console.log('Mark attendance action triggered')}
           data-testid="button-mark-attendance"
         >
-          <PlusIcon size={20} />
+          <PlusIcon size={24} />
           Mark Attendance
         </button>
       </div>
 
       <div className={styles.controls}>
         <div className={styles.searchBox}>
-          <SearchIcon size={20} className={styles.searchIcon} />
+          <SearchIcon size={24} className={styles.searchIcon} />
           <input
             type="text"
             placeholder="Search students..."
@@ -72,7 +72,7 @@ export default function AttendanceManagement() {
             onClick={() => console.log('Filter clicked')}
             data-testid="button-filter"
           >
-            <FilterIcon size={20} />
+            <FilterIcon size={24} />
           </button>
 
           <button 
@@ -80,7 +80,7 @@ export default function AttendanceManagement() {
             onClick={() => console.log('Export attendance data')}
             data-testid="button-export"
           >
-            <DownloadIcon size={20} />
+            <DownloadIcon size={24} />
           </button>
         </div>
       </div>

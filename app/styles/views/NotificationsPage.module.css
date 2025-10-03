@@ -1,0 +1,388 @@
+.notificationsPage {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.headerSection {
+  margin-bottom: 32px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(220, 15%, 15%);
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.backButton:hover {
+  background-color: hsl(220, 10%, 88%);
+}
+
+.dark .backButton {
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .backButton:hover {
+  background-color: hsl(220, 10%, 20%);
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .titleSection {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .pageTitle {
+  color: hsl(220, 5%, 95%);
+}
+
+.badge {
+  background-color: hsl(0, 75%, 55%);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 16px;
+  min-width: 28px;
+  text-align: center;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 8px;
+  background-color: hsl(220, 5%, 96%);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid hsl(220, 10%, 88%);
+}
+
+.dark .filterButtons {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+}
+
+.filterButton {
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(220, 15%, 45%);
+  transition: all 0.2s ease;
+}
+
+.filterButton:hover {
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+}
+
+.filterButton.active {
+  background-color: hsl(210, 85%, 18%);
+  color: hsl(210, 5%, 95%);
+}
+
+.dark .filterButton {
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .filterButton:hover {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .filterButton.active {
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(210, 5%, 95%);
+}
+
+.markAllButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: hsl(220, 15%, 15%);
+  transition: all 0.2s ease;
+}
+
+.markAllButton:hover {
+  background-color: hsl(220, 10%, 88%);
+}
+
+.dark .markAllButton {
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 95%);
+}
+
+.dark .markAllButton:hover {
+  background-color: hsl(220, 10%, 20%);
+}
+
+.notificationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  color: hsl(220, 15%, 45%);
+  text-align: center;
+}
+
+.dark .emptyState {
+  color: hsl(220, 5%, 65%);
+}
+
+.emptyState h3 {
+  margin: 24px 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.notificationCard {
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+}
+
+.notificationCard:hover {
+  background-color: hsl(220, 5%, 94%);
+}
+
+.dark .notificationCard {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 18%);
+}
+
+.dark .notificationCard:hover {
+  background-color: hsl(220, 10%, 14%);
+}
+
+.notificationCard.unread {
+  background-color: hsl(220, 5%, 94%);
+  border-color: hsl(210, 85%, 18%);
+}
+
+.dark .notificationCard.unread {
+  background-color: hsl(220, 10%, 14%);
+  border-color: hsl(220, 85%, 30%);
+}
+
+.notificationIcon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notificationIcon.success {
+  background-color: hsl(140, 70%, 95%);
+  color: hsl(140, 70%, 45%);
+}
+
+.dark .notificationIcon.success {
+  background-color: hsl(140, 30%, 20%);
+  color: hsl(140, 70%, 50%);
+}
+
+.notificationIcon.warning {
+  background-color: hsl(35, 85%, 95%);
+  color: hsl(35, 85%, 55%);
+}
+
+.dark .notificationIcon.warning {
+  background-color: hsl(35, 30%, 20%);
+  color: hsl(35, 85%, 60%);
+}
+
+.notificationIcon.info {
+  background-color: hsl(210, 85%, 95%);
+  color: hsl(210, 85%, 18%);
+}
+
+.dark .notificationIcon.info {
+  background-color: hsl(210, 30%, 20%);
+  color: hsl(210, 85%, 60%);
+}
+
+.notificationContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.notificationHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.notificationTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .notificationTitle {
+  color: hsl(220, 5%, 95%);
+}
+
+.unreadIndicator {
+  width: 10px;
+  height: 10px;
+  background-color: hsl(210, 85%, 18%);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dark .unreadIndicator {
+  background-color: hsl(220, 85%, 60%);
+}
+
+.notificationMessage {
+  font-size: 14px;
+  margin: 0 0 8px 0;
+  color: hsl(220, 15%, 45%);
+  line-height: 1.5;
+}
+
+.dark .notificationMessage {
+  color: hsl(220, 5%, 65%);
+}
+
+.notificationTime {
+  font-size: 13px;
+  color: hsl(220, 15%, 55%);
+}
+
+.dark .notificationTime {
+  color: hsl(220, 5%, 55%);
+}
+
+.notificationActions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: 1px solid hsl(220, 10%, 88%);
+  border-radius: 8px;
+  cursor: pointer;
+  color: hsl(220, 15%, 45%);
+  transition: all 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: hsl(220, 10%, 88%);
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .actionButton {
+  border-color: hsl(220, 10%, 18%);
+  color: hsl(220, 5%, 65%);
+}
+
+.dark .actionButton:hover {
+  background-color: hsl(220, 10%, 20%);
+  color: hsl(220, 5%, 95%);
+}
+
+.deleteButton:hover {
+  background-color: hsl(0, 75%, 95%);
+  border-color: hsl(0, 75%, 55%);
+  color: hsl(0, 75%, 55%);
+}
+
+.dark .deleteButton:hover {
+  background-color: hsl(0, 20%, 20%);
+  border-color: hsl(0, 75%, 65%);
+  color: hsl(0, 75%, 65%);
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+  .pageTitle {
+    font-size: 24px;
+  }
+
+  .notificationCard {
+    flex-direction: column;
+  }
+
+  .notificationActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

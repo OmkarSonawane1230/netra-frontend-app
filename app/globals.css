@@ -12,3 +12,9 @@
 @import './styles/components/dialog.css';
 @import './styles/components/dropdown.css';
 @import './styles/components/badge.css';
+
+/* This line fixes the bug with lucide-react icons which have scaling issue */
+svg.lucide {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 7%;    
+}

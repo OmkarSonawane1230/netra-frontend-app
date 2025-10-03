@@ -139,3 +139,20 @@ fieldset {
   white-space: nowrap;
   border: 0;
 }
+
+/* Webkit browsers: Chrome, Safari, Edge */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* Optional for container */
+.no-scroll {
+  overflow: scroll; /* still scrollable */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

@@ -95,7 +95,7 @@ export default function LoginPage() {
                             Username
                         </label>
                         <div className={styles.inputContainer}>
-                            <UserIcon size={20} className={styles.inputIcon} />
+                            <UserIcon size={24} className={styles.inputIcon} />
                             <input
                                 type="text"
                                 id="username"
@@ -119,7 +119,7 @@ export default function LoginPage() {
                             Password
                         </label>
                         <div className={styles.inputContainer}>
-                            <LockIcon size={20} className={styles.inputIcon} />
+                            <LockIcon size={24} className={styles.inputIcon} />
                             <input
                                 type={showPassword ? 'text' : 'password'}
                                 id="password"
@@ -136,7 +136,7 @@ export default function LoginPage() {
                                 className={styles.passwordToggle}
                                 data-testid="button-toggle-password"
                                 title={showPassword ? 'Hide password' : 'Show password'}
-                                icon={showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+                                icon={showPassword ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
                             />
 
                             {/* <button
@@ -146,7 +146,7 @@ export default function LoginPage() {
                                 data-testid="button-toggle-password"
                                 title={showPassword ? 'Hide password' : 'Show password'}
                             >
-                                {showPassword ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+                                {showPassword ? <EyeOffIcon size={24} /> : <EyeIcon size={24} />}
                             </button> */}
                         </div>
                         {errors.password && (

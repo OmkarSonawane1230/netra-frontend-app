@@ -51,7 +51,7 @@ export default function ReportsModule() {
             onClick={handleGenerateReport}
             data-testid="button-generate-report"
           >
-            <BarChart3Icon size={20} />
+            <BarChart3Icon size={24} />
             Generate Report
           </button>
           <button 
@@ -59,7 +59,7 @@ export default function ReportsModule() {
             onClick={handleExportReport}
             data-testid="button-export-report"
           >
-            <DownloadIcon size={20} />
+            <DownloadIcon size={24} />
             Export
           </button>
         </div>
@@ -102,7 +102,7 @@ export default function ReportsModule() {
           data-testid="button-advanced-filters"
           title="Advanced Filters"
         >
-          <FilterIcon size={20} />
+          <FilterIcon size={24} />
         </button>
       </div>
 

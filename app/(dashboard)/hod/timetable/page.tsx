@@ -62,7 +62,7 @@ export default function TimetableManagement() {
           onClick={() => console.log('Create new timetable action triggered')}
           data-testid="button-create-timetable"
         >
-          <PlusIcon size={20} />
+          <PlusIcon size={24} />
           Create Timetable
         </button>
       </div>
@@ -102,7 +102,7 @@ export default function TimetableManagement() {
 
       <div className={styles.timetableContainer}>
         <div className={styles.timetableHeader}>
-          <CalendarIcon size={20} />
+          <CalendarIcon size={24} />
           <span>Timetable for {selectedClass} - {selectedDay.charAt(0).toUpperCase() + selectedDay.slice(1)}</span>
         </div>
 

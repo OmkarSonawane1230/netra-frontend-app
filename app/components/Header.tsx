@@ -1,13 +1,13 @@
 'use client'
 import { useUI } from '../context/UIContext';
-import { SunIcon, MoonIcon, BellIcon, UserIcon } from 'lucide-react';
+import { BellIcon, UserIcon } from 'lucide-react';
 import styles from '@/app/styles/views/DashboardLayout.module.css';
-
+import { useRouter } from 'next/navigation';
 
 
 export default function Header() {
-    const { sidebarCollapsed, toggleSidebar } = useUI();
-    const { activeModule, setActiveModule } = useUI();
+    const { activeModule, userRole } = useUI();
+    const router = useRouter();
 
     return (
         <header className={styles.header}>
@@ -19,32 +19,22 @@ export default function Header() {
             </div>
 
             <div className={styles.headerRight}>
-                {/* <button
-                    className={styles.headerButton}
-                    onClick={handleToggleDarkMode}
-                    data-testid="button-theme-toggle"
-                    title="Toggle dark mode"
-                >
-                    {darkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
-                </button> */}
-
                 <button
                     className={styles.headerButton}
-                    onClick={() => console.log('Notifications clicked')}
+                    onClick={() => router.push(`/${userRole}/notifications`)}
                     data-testid="button-notifications"
                     title="Notifications"
                 >
-                    <BellIcon size={20} />
+                    <BellIcon size={24} />
                 </button>
 
                 <div className={styles.userProfile}>
                     <button
                         className={styles.profileButton}
-                        onClick={() => console.log('Profile clicked')}
+                        onClick={() => router.push(`/${userRole}/profile`)}
                         data-testid="button-profile"
                     >
-                        <UserIcon size={20} />
-                        <span className={styles.profileText}>Admin</span>
+                        <UserIcon size={24} />
                     </button>
                 </div>
             </div>

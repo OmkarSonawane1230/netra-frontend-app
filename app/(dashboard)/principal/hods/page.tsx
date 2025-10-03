@@ -163,14 +163,14 @@ export default function ManageHODs() {
           onClick={handleAddHOD}
           data-testid="button-add-hod"
         >
-          <PlusIcon size={20} />
+          <PlusIcon size={24} />
           Assign HOD
         </button>
       </div>
 
       <div className={styles.controls}>
         <div className={styles.searchBox}>
-          <SearchIcon size={20} className={styles.searchIcon} />
+          <SearchIcon size={24} className={styles.searchIcon} />
           <input
             type="text"
             placeholder="Search HODs..."
