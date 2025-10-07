@@ -1,110 +1,236 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
+import { getSubjects, createSubject, deleteSubject, updateSubject, getStaff } from '@/services/api';
+import { FormModal, FormField } from '@/app/components/FormModal';
+
 import { SearchIcon, PlusIcon, EditIcon, TrashIcon, EyeIcon, BookOpenIcon } from 'lucide-react';
 import styles from '@/app/styles/views/ManageSubjects.module.css';
 
 export default function ManageSubjects() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('all');
-  const [selectedSemester, setSelectedSemester] = useState('all');
+  // Modal state
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // Use only one editingSubject declaration
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
+  const [selectedSemester, setSelectedSemester] = useState<string>('all');
 
-  const subjects = [
-    { 
-      id: 1, 
-      subjectCode: 'MATH101', 
-      name: 'Calculus I', 
-      department: 'Mathematics',
-      semester: 1,
-      credits: 4,
-      type: 'Theory',
-      teacher: 'Dr. Sarah Wilson',
-      totalStudents: 45,
-      status: 'active'
-    },
-    { 
-      id: 2, 
-      subjectCode: 'PHYS201', 
-      name: 'Quantum Physics', 
-      department: 'Physics',
-      semester: 2,
-      credits: 3,
-      type: 'Theory',
-      teacher: 'Prof. John Davis',
-      totalStudents: 38,
-      status: 'active'
-    },
-    { 
-      id: 3, 
-      subjectCode: 'CHEM101', 
-      name: 'Organic Chemistry', 
-      department: 'Chemistry',
-      semester: 1,
-      credits: 4,
-      type: 'Theory + Lab',
-      teacher: 'Dr. Emily Brown',
-      totalStudents: 42,
-      status: 'active'
-    },
-    { 
-      id: 4, 
-      subjectCode: 'BIO301', 
-      name: 'Molecular Biology', 
-      department: 'Biology',
-      semester: 3,
-      credits: 3,
-      type: 'Theory',
-      teacher: 'Prof. Michael Lee',
-      totalStudents: 35,
-      status: 'active'
-    },
-    { 
-      id: 5, 
-      subjectCode: 'CS102', 
-      name: 'Data Structures', 
-      department: 'Computer Science',
-      semester: 1,
-      credits: 4,
-      type: 'Theory + Lab',
-      teacher: 'Dr. Anna Garcia',
-      totalStudents: 50,
-      status: 'active'
-    },
-    { 
-      id: 6, 
-      subjectCode: 'MATH201', 
-      name: 'Linear Algebra', 
-      department: 'Mathematics',
-      semester: 2,
-      credits: 3,
-      type: 'Theory',
-      teacher: 'Dr. Sarah Wilson',
-      totalStudents: 40,
-      status: 'active'
-    },
-  ];
+  const { user } = useAuth();
 
-  const filteredSubjects = subjects.filter(subject => 
+  interface Subject {
+    id: number;
+    subjectCode: string;
+    name: string;
+    department: string;
+    semester: number;
+    credits: number;
+    type: string;
+    teacher: string;
+    totalStudents: number;
+    status: string;
+    abbreviation?: string;
+  }
+
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [staff, setStaff] = useState<any[]>([]);
+  const [newName, setNewName] = useState<string>('');
+  const [newAbbr, setNewAbbr] = useState<string>('');
+  // State for edit modal
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
+  const [editName, setEditName] = useState<string>('');
+  const [editAbbr, setEditAbbr] = useState<string>('');
+
+  const fetchSubjects = useCallback(async () => {
+    try {
+      const data = await getSubjects();
+      // Map API data to Subject shape if needed
+      const mapped: Subject[] = Array.isArray(data)
+        ? data.map((sub: any) => ({
+            id: Number(sub.id),
+            subjectCode: sub.subjectCode || sub.code || '',
+            name: sub.name || '',
+            department: sub.department || '',
+            semester: Number(sub.semester) || 1,
+            credits: Number(sub.credits) || 0,
+            type: sub.type || '',
+            teacher: sub.teacher || '',
+            totalStudents: Number(sub.totalStudents) || 0,
+            status: sub.status || 'active',
+            abbreviation: sub.abbreviation || '',
+          })
+        )
+        : [];
+      setSubjects(mapped);
+    } catch (error: any) {
+      alert(`Error fetching subjects: ${error.message}`);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchSubjects();
+    // Fetch staff for teacher selector
+    (async () => {
+      try {
+        const staffData = await getStaff();
+        setStaff(Array.isArray(staffData) ? staffData : []);
+      } catch {}
+    })();
+  }, [fetchSubjects]);
+
+  const handleEditClick = (sub: Subject) => {
+    setEditingSubject(sub);
+    setEditName(sub.name);
+    setEditAbbr(sub.abbreviation || '');
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => setIsModalOpen(false);
+
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editingSubject) return;
+    try {
+      await updateSubject(String(editingSubject.id), { name: editName, abbreviation: editAbbr });
+      alert('Subject updated successfully.');
+      handleCloseModal();
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Update Error: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async (subjectId: number, subjectName: string) => {
+    if (!confirm(`Are you sure you want to delete the subject: ${subjectName}?`)) return;
+    try {
+      await deleteSubject(String(subjectId));
+      alert('Subject deleted successfully.');
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      // Add required fields for SubjectData
+      await createSubject({
+        name: newName,
+        abbreviation: newAbbr,
+        code: newAbbr,
+        department: selectedDepartment === 'all' ? '' : selectedDepartment,
+        semester: selectedSemester === 'all' ? 1 : Number(selectedSemester),
+      });
+      alert('Subject created successfully.');
+      setNewName('');
+      setNewAbbr('');
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Error creating subject: ${error.message}`);
+    }
+  };
+
+  // Remove hardcoded subjects array, use state subjects
+
+  const filteredSubjects = subjects.filter((subject) =>
     (selectedDepartment === 'all' || subject.department === selectedDepartment) &&
     (selectedSemester === 'all' || subject.semester.toString() === selectedSemester) &&
-    (subject.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     subject.subjectCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     subject.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
+    (subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subject.subjectCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subject.teacher.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  const handleAddSubject = () => {
-    console.log('Add new subject action triggered');
-  };
-
+  // Example handlers for UI actions (can be replaced with real logic)
+  // Modal open handlers
+  const handleAddSubject = () => setIsAddModalOpen(true);
   const handleEditSubject = (id: number) => {
-    console.log(`Edit subject ${id} action triggered`);
+    const subject = subjects.find(s => s.id === id) || null;
+    setEditingSubject(subject);
+    setIsEditModalOpen(true);
+  };
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingSubject(null);
+  };
+  // Delete handler
+  const handleDeleteSubject = async (id: number) => {
+    const subject = subjects.find(s => s.id === id);
+    if (!subject) return;
+    if (!confirm(`Are you sure you want to delete the subject: ${subject.name}?`)) return;
+    try {
+      await deleteSubject(String(id));
+      alert('Subject deleted successfully.');
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Error deleting subject: ${error.message}`);
+    }
+  };
+  // Form fields for add/edit
+  const addSubjectFields: FormField[] = [
+  { name: 'name', label: 'Subject Name', type: 'text', placeholder: 'e.g., Calculus I', required: true },
+  { name: 'abbreviation', label: 'Abbreviation', type: 'text', placeholder: 'e.g., MATH101', required: true },
+  { name: 'code', label: 'Subject Code', type: 'text', placeholder: 'e.g., MATH101', required: true },
+  { name: 'semester', label: 'Semester', type: 'number', placeholder: 'e.g., 1', required: true },
+  { name: 'credits', label: 'Credits', type: 'number', placeholder: 'e.g., 4', required: true },
+  { name: 'totalStudents', label: 'Total Students', type: 'number', placeholder: 'e.g., 45', required: true },
+  { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })) },
+  ];
+
+  const getEditSubjectFields = (): FormField[] => [
+  { name: 'name', label: 'Subject Name', type: 'text', required: true, defaultValue: editingSubject?.name || '' },
+  { name: 'abbreviation', label: 'Abbreviation', type: 'text', required: true, defaultValue: editingSubject?.abbreviation || '' },
+  { name: 'code', label: 'Subject Code', type: 'text', required: true, defaultValue: editingSubject?.subjectCode || '' },
+  { name: 'semester', label: 'Semester', type: 'number', required: true, defaultValue: editingSubject?.semester || 1 },
+  { name: 'credits', label: 'Credits', type: 'number', required: true, defaultValue: editingSubject?.credits || 0 },
+  { name: 'totalStudents', label: 'Total Students', type: 'number', required: true, defaultValue: editingSubject?.totalStudents || 0 },
+  { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
+  ];
+  // Form submit handlers
+  const handleAddFormSubmit = async (data: Record<string, any>) => {
+    try {
+      await createSubject({
+        name: data.name,
+        abbreviation: data.abbreviation,
+        code: data.code,
+        department: data.department,
+        semester: Number(data.semester),
+        credits: Number(data.credits),
+        type: data.type,
+        teacher: data.teacher,
+        totalStudents: Number(data.totalStudents),
+        status: data.status,
+      });
+      alert('Subject created successfully.');
+      setIsAddModalOpen(false);
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
   };
 
-  const handleDeleteSubject = (id: number) => {
-    console.log(`Delete subject ${id} action triggered`);
-  };
-
-  const handleViewSubject = (id: number) => {
-    console.log(`View subject ${id} details triggered`);
+  const handleEditFormSubmit = async (data: Record<string, any>) => {
+    if (!editingSubject) return;
+    try {
+      await updateSubject(String(editingSubject.id), {
+        name: data.name,
+        abbreviation: data.abbreviation,
+        code: data.code,
+        department: data.department,
+        semester: Number(data.semester),
+        credits: Number(data.credits),
+        type: data.type,
+        teacher: data.teacher,
+        totalStudents: Number(data.totalStudents),
+        status: data.status,
+      });
+      alert('Subject updated successfully.');
+      handleCloseEditModal();
+      fetchSubjects();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
   };
 
   return (
@@ -232,14 +358,7 @@ export default function ManageSubjects() {
                 </td>
                 <td>
                   <div className={styles.actionButtons}>
-                    <button 
-                      className={styles.actionButton}
-                      onClick={() => handleViewSubject(subject.id)}
-                      data-testid={`button-view-${subject.id}`}
-                      title="View Subject Details"
-                    >
-                      <EyeIcon size={16} />
-                    </button>
+                    {/* Remove handleViewSubject button since not implemented */}
                     <button 
                       className={styles.actionButton}
                       onClick={() => handleEditSubject(subject.id)}
@@ -256,6 +375,26 @@ export default function ManageSubjects() {
                     >
                       <TrashIcon size={16} />
                     </button>
+      <FormModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        title="Add New Subject"
+        description="Fill in the details to add a new subject."
+        fields={addSubjectFields}
+        onSubmit={handleAddFormSubmit}
+        submitText="Add Subject"
+      />
+
+      <FormModal
+        key={editingSubject?.id || 'edit-modal'}
+        open={isEditModalOpen}
+        onOpenChange={handleCloseEditModal}
+        title="Edit Subject Details"
+        description={`Update details for ${editingSubject?.name}`}
+        fields={getEditSubjectFields()}
+        onSubmit={handleEditFormSubmit}
+        submitText="Update Subject"
+      />
                   </div>
                 </td>
               </tr>

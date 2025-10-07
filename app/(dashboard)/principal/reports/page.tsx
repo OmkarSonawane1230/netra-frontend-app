@@ -17,7 +17,7 @@ const AttendanceReportComponent = () => {
   const [groupedRecords, setGroupedRecords] = useState<{ [key: string]: AttendanceRecord[] }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [date, setDate] = useState('2025-10-02');
+  const [date, setDate] = useState('');
   const [subjectFilter, setSubjectFilter] = useState('');
   const [classFilter, setClassFilter] = useState('');
   const [teacherFilter, setTeacherFilter] = useState('');

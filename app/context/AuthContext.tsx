@@ -34,25 +34,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log("AuthContext - Initializing, token exists:", !!token);
     
     if (token) {
         try {
             const decoded = jwtDecode(token);
-            console.log("AuthContext - Token decoded successfully");
             const storedUser = localStorage.getItem('user');
             if (storedUser) {
                 const parsedUser = JSON.parse(storedUser);
-                console.log("AuthContext - User loaded from localStorage:", parsedUser);
                 setUser(parsedUser);
             }
         } catch (e) {
             console.error("AuthContext - Invalid token:", e);
             localStorage.clear();
         }
-    } else {
-        console.log("AuthContext - No token found in localStorage");
     }
+    
     setLoading(false);
   }, []);
   
