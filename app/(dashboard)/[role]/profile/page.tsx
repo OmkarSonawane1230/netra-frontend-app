@@ -1,5 +1,7 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
+import { updateUserProfile, changePassword } from '@/services/api';
 import { UserIcon, Mail, Shield, Lock, Save, LogOut, Camera, ArrowLeft } from 'lucide-react';
 import styles from '@/app/styles/views/ProfilePage.module.css';
 
@@ -8,41 +10,106 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ onBack }: ProfilePageProps) {
-  const [formData, setFormData] = useState({
-    name: 'Admin User',
-    email: 'admin@college.edu',
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-  });
+  const { user, logout } = useAuth();
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // State for profile details
+  const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
 
-  const handleSaveProfile = () => {
-    console.log('Saving profile:', formData);
-    // API call will be implemented by user
-  };
+  // State for password change
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
 
-  const handleChangePassword = () => {
-    console.log('Changing password');
-    // API call will be implemented by user
-  };
+  useEffect(() => {
+    if (user) {
+      setFullName(user.fullName || '');
+      setUsername(user.username || '');
+    }
+  }, [user]);
 
-  const handleLogout = () => {
-    console.log('Logging out');
-    // Logout logic will be implemented by user
-  };
+    const handleProfileSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setProfileError('');
+        setProfileSuccess('');
+        try {
+            const updatedData = await updateUserProfile({ name: fullName });
+            setProfileSuccess('Profile updated successfully!');
+            // Update local user data if needed
+            if (user) {
+                // Update local state or trigger a re-fetch
+                setFullName(updatedData.name || fullName);
+            }
+        } catch (error) {
+            setProfileError(error instanceof Error ? error.message : 'An error occurred');
+        }
+    };
+
+    const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setPasswordError('');
+        setPasswordSuccess('');
+        if (newPassword !== confirmPassword) {
+            setPasswordError("New passwords do not match.");
+            return;
+        }
+        try {
+            await changePassword({ 
+                current_password: currentPassword, 
+                new_password: newPassword,
+                confirm_password: confirmPassword
+            });
+            setPasswordSuccess('Password changed successfully!');
+            // Clear fields
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+        } catch (error) {
+            setPasswordError(error instanceof Error ? error.message : 'An error occurred');
+        }
+    };
+
+    // Use the existing individual state handlers
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        if (name === 'name') {
+            setFullName(value);
+        } else if (name === 'email') {
+            setUsername(value); // Assuming username is used for email
+        } else if (name === 'currentPassword') {
+            setCurrentPassword(value);
+        } else if (name === 'newPassword') {
+            setNewPassword(value);
+        } else if (name === 'confirmPassword') {
+            setConfirmPassword(value);
+        }
+    };
+
+    const handleSaveProfile = () => {
+        // Use the existing handleProfileSubmit logic
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent<HTMLFormElement>;
+        handleProfileSubmit(fakeEvent);
+    };
+
+    const handleChangePassword = () => {
+        // Use the existing handlePasswordSubmit logic
+        const fakeEvent = { preventDefault: () => {} } as React.FormEvent<HTMLFormElement>;
+        handlePasswordSubmit(fakeEvent);
+    };
+
+    const handleLogout = () => {
+        logout();
+    };
 
   return (
     <div className={styles.profilePage}>
       <div className={styles.headerSection}>
         {onBack && (
-          <button 
+          <button
             className={styles.backButton}
             onClick={onBack}
             data-testid="button-back"
@@ -59,7 +126,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
           <div className={styles.cardHeader}>
             <h2 className={styles.cardTitle}>Profile Information</h2>
           </div>
-          
+
           <div className={styles.profileAvatarSection}>
             <div className={styles.avatarWrapper}>
               <div className={styles.avatar}>
@@ -70,7 +137,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
               </button>
             </div>
             <div className={styles.avatarInfo}>
-              <h3 className={styles.userName} data-testid="text-user-name">{formData.name}</h3>
+              <h3 className={styles.userName} data-testid="text-user-name">{fullName || user?.fullName || 'User'}</h3>
               <div className={styles.roleInfo}>
                 <Shield size={16} />
                 <span data-testid="text-user-role">Administrator</span>
@@ -87,7 +154,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
                 type="text"
                 id="name"
                 name="name"
-                value={formData.name}
+                value={fullName}
                 onChange={handleInputChange}
                 className={styles.input}
                 data-testid="input-name"
@@ -103,14 +170,25 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
                 type="email"
                 id="email"
                 name="email"
-                value={formData.email}
+                value={username}
                 onChange={handleInputChange}
                 className={styles.input}
                 data-testid="input-email"
               />
             </div>
 
-            <button 
+            {profileError && (
+              <div className={styles.errorMessage} data-testid="profile-error">
+                {profileError}
+              </div>
+            )}
+            {profileSuccess && (
+              <div className={styles.successMessage} data-testid="profile-success">
+                {profileSuccess}
+              </div>
+            )}
+
+            <button
               className={styles.primaryButton}
               onClick={handleSaveProfile}
               data-testid="button-save-profile"
@@ -136,7 +214,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
                 type="password"
                 id="currentPassword"
                 name="currentPassword"
-                value={formData.currentPassword}
+                value={currentPassword}
                 onChange={handleInputChange}
                 className={styles.input}
                 placeholder="Enter current password"
@@ -153,7 +231,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
                 type="password"
                 id="newPassword"
                 name="newPassword"
-                value={formData.newPassword}
+                value={newPassword}
                 onChange={handleInputChange}
                 className={styles.input}
                 placeholder="Enter new password"
@@ -170,7 +248,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
                 type="password"
                 id="confirmPassword"
                 name="confirmPassword"
-                value={formData.confirmPassword}
+                value={confirmPassword}
                 onChange={handleInputChange}
                 className={styles.input}
                 placeholder="Confirm new password"
@@ -178,7 +256,18 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
               />
             </div>
 
-            <button 
+            {passwordError && (
+              <div className={styles.errorMessage} data-testid="password-error">
+                {passwordError}
+              </div>
+            )}
+            {passwordSuccess && (
+              <div className={styles.successMessage} data-testid="password-success">
+                {passwordSuccess}
+              </div>
+            )}
+
+            <button
               className={styles.primaryButton}
               onClick={handleChangePassword}
               data-testid="button-change-password"
@@ -198,7 +287,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
             <p className={styles.actionDescription}>
               Sign out of your account on this device.
             </p>
-            <button 
+            <button
               className={styles.logoutButton}
               onClick={handleLogout}
               data-testid="button-logout"

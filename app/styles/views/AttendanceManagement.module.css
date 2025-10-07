@@ -19,59 +19,56 @@
   color: hsl(220, 15%, 15%);
 }
 
+
+.attendanceTable thead {
+  background-color: hsl(220, 5%, 92%);
+  border-bottom: 2px solid hsl(220, 10%, 88%);
+}
+
+.dark .attendanceTable thead {
+  background-color: hsl(220, 10%, 16%);
+  border-bottom-color: hsl(220, 10%, 24%);
+}
+
 .dark .title {
   color: hsl(220, 5%, 95%);
 }
 
-.primaryButton {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background-color: hsl(220, 85%, 15%);
-  color: hsl(220, 5%, 95%);
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
 .primaryButton:hover {
   background-color: hsl(220, 85%, 20%);
-  transform: translateY(-1px);
 }
 
-.controls {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+.statusBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
-.searchBox {
-  position: relative;
-  flex: 1;
-  min-width: 240px;
+.statusBadge.present {
+  background-color: hsl(140, 70%, 95%);
+  color: hsl(140, 70%, 35%);
 }
 
-.searchIcon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: hsl(220, 15%, 45%);
+.dark .statusBadge.present {
+  background-color: hsl(140, 70%, 15%);
+  color: hsl(140, 70%, 65%);
 }
 
-.searchInput {
-  width: 100%;
-  padding: 12px 12px 12px 44px;
-  border: 1px solid hsl(220, 10%, 88%);
-  border-radius: 8px;
-  font-size: 14px;
-  background-color: hsl(220, 5%, 98%);
-  color: hsl(220, 15%, 15%);
+.statusBadge.absent {
+  background-color: hsl(0, 70%, 95%);
+  color: hsl(0, 70%, 45%);
+}
+
+.dark .statusBadge.absent {
+  background-color: hsl(0, 70%, 15%);
+  color: hsl(0, 70%, 65%);
+}
+
+.attendanceTable tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .searchInput:focus {
@@ -90,6 +87,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .filterSelect {
@@ -149,6 +147,7 @@
   border: 1px solid hsl(220, 10%, 92%);
   border-radius: 8px;
   overflow: hidden;
+  overflow-x: auto;
 }
 
 .dark .tableContainer {
@@ -251,25 +250,96 @@
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .searchBox {
     min-width: auto;
   }
-  
+
   .filters {
     justify-content: center;
   }
-  
+
   .tableContainer {
     overflow-x: auto;
   }
-  
+
   .attendanceTable {
     min-width: 600px;
+    font-size: 12px;
   }
+
+  .attendanceTable th,
+  .attendanceTable td {
+    padding: 12px 8px;
+  }
+}
+
+.statsCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background-color: hsl(220, 5%, 96%);
+  border: 1px solid hsl(220, 10%, 92%);
+  border-radius: 8px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .statCard {
+  background-color: hsl(220, 10%, 12%);
+  border-color: hsl(220, 10%, 22%);
+}
+
+.statIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: hsl(220, 85%, 15%);
+  color: hsl(220, 5%, 95%);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.statContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: hsl(220, 15%, 15%);
+}
+
+.dark .statValue {
+  color: hsl(220, 5%, 95%);
+}
+
+.statLabel {
+  font-size: 13px;
+  color: hsl(220, 15%, 45%);
+  font-weight: 500;
+}
+
+.dark .statLabel {
+  color: hsl(220, 5%, 65%);
 }

@@ -1,28 +1,30 @@
 'use client'
-import LoginPage from "./login/page";
+import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
-
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // This component's only job is to figure out where the user should go.
-    const user = localStorage.getItem('user');
+    // Check localStorage directly as a fallback
+    const storedUser = localStorage.getItem('user');
+    const localUser = storedUser ? JSON.parse(storedUser) : null;
+    
+    // Prioritize AuthContext, but fall back to localStorage
+    const effectiveAuth = isAuthenticated || !!localUser;
+    const effectiveUser = user || localUser;
 
-    if (user) {
-      // If user is logged in, send them to the dashboard.
-      // The (dashboard) folder's page.js will handle the rest.
-      router.push('/attendance'); 
-    } else {
-      // If no user, send them to the login page.
-      router.push('/login');
+    
+    if (effectiveAuth) {
+      router.replace(`/${effectiveUser.user.role}`);
+    } else if (!effectiveAuth) {
+      router.replace('/login');
     }
-    // We don't need to setLoading(false) because the page will be replaced.
-  }, [router]);
+  }, [isAuthenticated, user, router]);
 
+  // Show loading while determining where to redirect
   return (
     <div style={{
       display: 'flex',

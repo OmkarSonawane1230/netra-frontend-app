@@ -1,72 +1,82 @@
 'use client'
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+
+import { useAuth } from '@/app/context/AuthContext';
+import { getDepartments, createDepartment, deleteDepartment, updateDepartment } from '@/services/api';
+
 import { SearchIcon, PlusIcon, EditIcon, TrashIcon, EyeIcon, Building2Icon } from 'lucide-react';
 import { FormModal, FormField } from '@/app/components/FormModal';
 import styles from '@/app/styles/views/ManageDepartments.module.css';
 
+// Use DepartmentData type from services/api for consistency
+import type { DepartmentData } from '@/services/api';
+
 export default function ManageDepartments() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const departments = [
-    { 
-      id: 1, 
-      deptId: 'DEPT001', 
-      name: 'Mathematics', 
-      hod: 'Dr. Sarah Wilson',
-      totalStaff: 12,
-      totalSubjects: 8,
-      building: 'Block A',
-      status: 'active'
-    },
-    { 
-      id: 2, 
-      deptId: 'DEPT002', 
-      name: 'Physics', 
-      hod: 'Prof. John Davis',
-      totalStaff: 10,
-      totalSubjects: 6,
-      building: 'Block B',
-      status: 'active'
-    },
-    { 
-      id: 3, 
-      deptId: 'DEPT003', 
-      name: 'Chemistry', 
-      hod: 'Dr. Emily Brown',
-      totalStaff: 8,
-      totalSubjects: 5,
-      building: 'Block A',
-      status: 'active'
-    },
-    { 
-      id: 4, 
-      deptId: 'DEPT004', 
-      name: 'Biology', 
-      hod: 'Prof. Michael Lee',
-      totalStaff: 9,
-      totalSubjects: 7,
-      building: 'Block C',
-      status: 'active'
-    },
-    { 
-      id: 5, 
-      deptId: 'DEPT005', 
-      name: 'Computer Science', 
-      hod: 'Dr. Anna Garcia',
-      totalStaff: 15,
-      totalSubjects: 10,
-      building: 'Block D',
-      status: 'active'
-    },
-  ];
+  const { user } = useAuth();
+  const token = user?.token;
+  const [depts, setDepts] = useState<DepartmentData[]>([]);
 
-  const filteredDepartments = departments.filter(dept => 
-    (selectedStatus === 'all' || dept.status === selectedStatus) &&
-    (dept.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-     dept.deptId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     dept.hod.toLowerCase().includes(searchTerm.toLowerCase()))
+  // State for edit modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingDept, setEditingDept] = useState<DepartmentData | null>(null);
+
+  const fetchDepts = useCallback(async () => {
+    try {
+      const data = await getDepartments();
+      setDepts(data);
+    } catch (error) {
+      console.error('Error fetching departments:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDepts();
+  }, [fetchDepts]);
+
+  const handleEditClick = (dept: DepartmentData | null) => {
+    if (!dept) return;
+    setEditingDept(dept);
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingDept(null);
+  };
+
+  const handleEditFormSubmit = async (data: Record<string, any>) => {
+    try {
+      if (!editingDept) return;
+      await updateDepartment(editingDept.id || editingDept.code, { name: data.name, code: data.code });
+      alert('Department updated successfully.');
+      setIsEditModalOpen(false);
+      setEditingDept(null);
+      fetchDepts();
+    } catch (error: any) {
+      alert(`Update Error: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async (deptId: string, deptName: string) => {
+    if (!confirm(`Are you sure you want to delete the department: ${deptName}?`)) return;
+    try {
+      await deleteDepartment(deptId);
+      alert('Department deleted successfully.');
+      fetchDepts();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
+
+
+  const filteredDepartments = depts.filter((dept: DepartmentData) =>
+    dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    dept.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddDepartment = () => {
@@ -74,32 +84,17 @@ export default function ManageDepartments() {
   };
 
   const handleFormSubmit = async (data: Record<string, any>) => {
-    console.log('New department data:', data);
-    // Here you would make an API request to save the department
-    // Example: await fetch('/api/departments', { method: 'POST', body: JSON.stringify(data) })
-    setIsAddModalOpen(false);
-  };
-
-  const handleEditDepartment = (id: number) => {
-    console.log(`Edit department ${id} action triggered`);
-  };
-
-  const handleDeleteDepartment = (id: number) => {
-    console.log(`Delete department ${id} action triggered`);
-  };
-
-  const handleViewDepartment = (id: number) => {
-    console.log(`View department ${id} details triggered`);
+    try {
+      await createDepartment({ name: data.name, code: data.code });
+      alert('Department created successfully.');
+      setIsAddModalOpen(false);
+      fetchDepts();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
   };
 
   const addDepartmentFields: FormField[] = [
-    {
-      name: 'deptId',
-      label: 'Department ID',
-      type: 'text',
-      placeholder: 'e.g., DEPT006',
-      required: true,
-    },
     {
       name: 'name',
       label: 'Department Name',
@@ -108,38 +103,30 @@ export default function ManageDepartments() {
       required: true,
     },
     {
-      name: 'hod',
-      label: 'Head of Department',
+      name: 'code',
+      label: 'Department Code',
       type: 'text',
-      placeholder: 'e.g., Dr. John Doe',
+      placeholder: 'e.g., CS',
       required: true,
     },
+  ];
+
+  const getEditDepartmentFields = (): FormField[] => [
     {
-      name: 'building',
-      label: 'Building',
-      type: 'select',
+      name: 'name',
+      label: 'Department Name',
+      type: 'text',
+      placeholder: 'e.g., Computer Science',
       required: true,
-      options: [
-        { value: 'Block A', label: 'Block A' },
-        { value: 'Block B', label: 'Block B' },
-        { value: 'Block C', label: 'Block C' },
-        { value: 'Block D', label: 'Block D' },
-        { value: 'Block E', label: 'Block E' },
-      ],
+      defaultValue: editingDept?.name || '',
     },
     {
-      name: 'totalStaff',
-      label: 'Total Staff',
-      type: 'number',
-      placeholder: '0',
-      defaultValue: 0,
-    },
-    {
-      name: 'totalSubjects',
-      label: 'Total Subjects',
-      type: 'number',
-      placeholder: '0',
-      defaultValue: 0,
+      name: 'code',
+      label: 'Department Code',
+      type: 'text',
+      placeholder: 'e.g., CS',
+      required: true,
+      defaultValue: editingDept?.code || '',
     },
   ];
 
@@ -147,7 +134,7 @@ export default function ManageDepartments() {
     <div className={styles.manageDepartments}>
       <div className={styles.header}>
         <h2 className={styles.title}>Manage Departments</h2>
-        <button 
+        <button
           className={styles.primaryButton}
           onClick={handleAddDepartment}
           data-testid="button-add-department"
@@ -170,16 +157,7 @@ export default function ManageDepartments() {
           />
         </div>
 
-        <select
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-          className={styles.filterSelect}
-          data-testid="select-status-filter"
-        >
-          <option value="all">All Statuses</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+
       </div>
 
       <div className={styles.statsCards}>
@@ -188,84 +166,62 @@ export default function ManageDepartments() {
             <Building2Icon size={24} />
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{departments.length}</div>
+            <div className={styles.statValue}>{depts.length}</div>
             <div className={styles.statLabel}>Total Departments</div>
-          </div>
-        </div>
-        <div className={styles.statCard} data-testid="stat-total-staff">
-          <div className={styles.statIcon}>
-            <Building2Icon size={24} />
-          </div>
-          <div className={styles.statContent}>
-            <div className={styles.statValue}>{departments.reduce((sum, d) => sum + d.totalStaff, 0)}</div>
-            <div className={styles.statLabel}>Total Staff</div>
-          </div>
-        </div>
-        <div className={styles.statCard} data-testid="stat-total-subjects">
-          <div className={styles.statIcon}>
-            <Building2Icon size={24} />
-          </div>
-          <div className={styles.statContent}>
-            <div className={styles.statValue}>{departments.reduce((sum, d) => sum + d.totalSubjects, 0)}</div>
-            <div className={styles.statLabel}>Total Subjects</div>
           </div>
         </div>
       </div>
 
-      <div className={styles.tableContainer}>
+      <div className={styles.tableContainer}>        
         <table className={styles.departmentsTable}>
           <thead>
             <tr>
-              <th>Dept ID</th>
               <th>Department Name</th>
-              <th>HOD</th>
-              <th>Staff</th>
-              <th>Subjects</th>
-              <th>Building</th>
-              <th>Status</th>
+              <th>Department Code</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {filteredDepartments.map((dept) => (
-              <tr key={dept.id} data-testid={`row-department-${dept.id}`}>
-                <td className={styles.deptId} data-testid={`text-dept-id-${dept.id}`}>
-                  {dept.deptId}
+            {filteredDepartments.length === 0 ? (
+              <tr>
+                <td colSpan={3} style={{textAlign: 'center', padding: '20px'}}>
+                  {depts.length === 0 ? 'No departments found. Try adding some departments.' : 'No departments match your search criteria.'}
                 </td>
-                <td className={styles.deptName} data-testid={`text-dept-name-${dept.id}`}>
+              </tr>
+            ) : (
+              filteredDepartments.map((dept: DepartmentData) => (
+              <tr key={dept.id || dept.code} data-testid={`row-department-${dept.id || dept.code}`}>
+                <td className={styles.deptName} data-testid={`text-dept-name-${dept.id || dept.code}`}>
                   {dept.name}
                 </td>
-                <td data-testid={`text-hod-${dept.id}`}>{dept.hod}</td>
-                <td data-testid={`text-staff-${dept.id}`}>{dept.totalStaff}</td>
-                <td data-testid={`text-subjects-${dept.id}`}>{dept.totalSubjects}</td>
-                <td data-testid={`text-building-${dept.id}`}>{dept.building}</td>
-                <td data-testid={`text-status-${dept.id}`}>
+                <td data-testid={`text-dept-code-${dept.id || dept.code}`}>{dept.code}</td>
+                {/* <td data-testid={`text-status-${dept.id}`}>
                   <span className={`${styles.statusBadge} ${styles[dept.status]}`}>
                     {dept.status}
                   </span>
-                </td>
+                </td> */}
                 <td>
                   <div className={styles.actionButtons}>
-                    <button 
+                    {/* <button 
                       className={styles.actionButton}
                       onClick={() => handleViewDepartment(dept.id)}
                       data-testid={`button-view-${dept.id}`}
                       title="View Department"
                     >
                       <EyeIcon size={16} />
-                    </button>
-                    <button 
+                    </button> */}
+                    <button
                       className={styles.actionButton}
-                      onClick={() => handleEditDepartment(dept.id)}
-                      data-testid={`button-edit-${dept.id}`}
+                      onClick={() => handleEditClick(dept)}
+                      data-testid={`button-edit-${dept.id || dept.code}`}
                       title="Edit Department"
                     >
                       <EditIcon size={16} />
                     </button>
-                    <button 
+                    <button
                       className={`${styles.actionButton} ${styles.deleteButton}`}
-                      onClick={() => handleDeleteDepartment(dept.id)}
-                      data-testid={`button-delete-${dept.id}`}
+                      onClick={() => handleDelete(dept.id || dept.code, dept.name)}
+                      data-testid={`button-delete-${dept.id || dept.code}`}
                       title="Delete Department"
                     >
                       <TrashIcon size={16} />
@@ -273,7 +229,8 @@ export default function ManageDepartments() {
                   </div>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -286,6 +243,17 @@ export default function ManageDepartments() {
         fields={addDepartmentFields}
         onSubmit={handleFormSubmit}
         submitText="Add Department"
+      />
+
+      <FormModal
+        key={editingDept?.id || editingDept?.code || 'edit-modal'}
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        title="Edit Department"
+        description="Update the department details"
+        fields={getEditDepartmentFields()}
+        onSubmit={handleEditFormSubmit}
+        submitText="Update Department"
       />
     </div>
   );
