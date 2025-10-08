@@ -13,7 +13,6 @@ export default function ManageSubjects() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   // Use only one editingSubject declaration
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [selectedSemester, setSelectedSemester] = useState<string>('all');
 
   const { user } = useAuth();
@@ -120,7 +119,8 @@ export default function ManageSubjects() {
         name: newName,
         abbreviation: newAbbr,
         code: newAbbr,
-        department: selectedDepartment === 'all' ? '' : selectedDepartment,
+        // HOD manages only their department, so department is handled server-side or by authenticated user
+        department: '',
         semester: selectedSemester === 'all' ? 1 : Number(selectedSemester),
       });
       alert('Subject created successfully.');
@@ -135,7 +135,6 @@ export default function ManageSubjects() {
   // Remove hardcoded subjects array, use state subjects
 
   const filteredSubjects = subjects.filter((subject) =>
-    (selectedDepartment === 'all' || subject.department === selectedDepartment) &&
     (selectedSemester === 'all' || subject.semester.toString() === selectedSemester) &&
     (subject.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       subject.subjectCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -260,20 +259,7 @@ export default function ManageSubjects() {
           />
         </div>
 
-        <select
-          value={selectedDepartment}
-          onChange={(e) => setSelectedDepartment(e.target.value)}
-          className={styles.filterSelect}
-          data-testid="select-department-filter"
-        >
-          <option value="all">All Departments</option>
-          <option value="Mathematics">Mathematics</option>
-          <option value="Physics">Physics</option>
-          <option value="Chemistry">Chemistry</option>
-          <option value="Biology">Biology</option>
-          <option value="Computer Science">Computer Science</option>
-        </select>
-
+        {/* Department filter removed because HOD manages only their department */}
         <select
           value={selectedSemester}
           onChange={(e) => setSelectedSemester(e.target.value)}
