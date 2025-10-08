@@ -106,7 +106,7 @@ export interface PasswordData {
 }
 
 // This should be defined in a .env.local file in your frontend's root directory
-const API_URL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL: string = process.env.NEXT_PUBLIC_API_URL || 'https://curly-fortnight-9765qxr65vxp2xx6q-8000.app.github.dev';
 
 // --- Helper Function to get Auth Headers ---
 const getAuthHeaders = (): Record<string, string> => {

@@ -196,14 +196,16 @@ export default function ManageSubjects() {
         name: data.name,
         abbreviation: data.abbreviation,
         code: data.code,
-        department: data.department,
+        // HOD's department is set automatically from authenticated user
+        department: user?.department || '',
         semester: Number(data.semester),
         credits: Number(data.credits),
         type: data.type,
         totalStudents: Number(data.totalStudents),
         status: data.status,
       };
-      if (data.teacher) payload.teacher = data.teacher;
+      // Always set teacher field at creation time; if not provided send empty string
+      payload.teacher = data.teacher || '';
 
       await createSubject(payload);
       alert('Subject created successfully.');
