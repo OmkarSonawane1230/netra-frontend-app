@@ -49,7 +49,7 @@ export default function StaffManagement() {
 
   // Derived teachers array from staff
   const teachers: { id: number; name: string }[] = staff.filter(
-    (s) => s.role === 'staff' || s.role === 'class-teacher'
+    (s) => s.role === 'staff' || s.role === 'mentor'
   ).map((s) => ({
     id: s.id,
     name: s.full_name,
@@ -91,7 +91,7 @@ export default function StaffManagement() {
     { name: 'password', label: 'Password', type: 'text', placeholder: 'Enter a secure password', required: true },
     {
       name: 'role', label: 'Role', type: 'select', required: true, options: [
-        { value: 'class-teacher', label: 'Class Teacher' },
+        { value: 'mentor', label: 'Class Teacher' },
         { value: 'staff', label: 'Staff' },
       ]
     },
@@ -111,7 +111,7 @@ export default function StaffManagement() {
     { name: 'password', label: 'Password', type: 'text', required: false, placeholder: 'Enter a password (leave blank to keep unchanged)' },
     {
       name: 'role', label: 'Role', type: 'select', required: true, options: [
-        { value: 'class-teacher', label: 'Class Teacher' },
+        { value: 'mentor', label: 'Class Teacher' },
         { value: 'staff', label: 'Staff' },
       ], defaultValue: editingStaff?.role || ''
     },
@@ -154,7 +154,7 @@ export default function StaffManagement() {
         formData.append('assigned_class', '');
       }
       // is_class_teacher required by backend
-      formData.append('is_class_teacher', String(data.role === 'class-teacher'));
+      formData.append('is_class_teacher', String(data.role === 'mentor'));
       // subject_ids required by backend
       if (Array.isArray(data.subject_ids)) {
         data.subject_ids.forEach((id: string | number) => formData.append('subject_ids', String(id)));
@@ -211,7 +211,7 @@ export default function StaffManagement() {
         department: user?.department || '',
         role: data.role,
         assigned_class: data.assigned_class ?? '',
-        is_class_teacher: data.role === 'class-teacher',
+        is_class_teacher: data.role === 'mentor',
         subject_ids: Array.isArray(data.subject_ids) ? data.subject_ids : [],
         teacher_id: data.teacher_id ? String(data.teacher_id) : '',
       };

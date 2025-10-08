@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
-import { getSubjects, createSubject, deleteSubject, updateSubject, getStaff } from '@/services/api';
+import { getSubjects, createSubject, deleteSubject, updateSubject, getStaff, CreateSubjectData } from '@/services/api';
 import { FormModal, FormField } from '@/app/components/FormModal';
 
 import { SearchIcon, PlusIcon, EditIcon, TrashIcon, EyeIcon, BookOpenIcon } from 'lucide-react';
@@ -174,7 +174,8 @@ export default function ManageSubjects() {
     { name: 'semester', label: 'Semester', type: 'number', placeholder: 'e.g., 1', required: true },
     { name: 'credits', label: 'Credits', type: 'number', placeholder: 'e.g., 4', required: true },
     { name: 'totalStudents', label: 'Total Students', type: 'number', placeholder: 'e.g., 45', required: true },
-    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })) },
+    // Teacher is optional when creating a subject. HODs can add subjects first and assign teachers later.
+    { name: 'teacher', label: 'Teacher (optional)', type: 'select', required: false, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })) },
   ];
 
   const getEditSubjectFields = (): FormField[] => [
@@ -184,12 +185,14 @@ export default function ManageSubjects() {
     { name: 'semester', label: 'Semester', type: 'number', required: true, defaultValue: editingSubject?.semester || 1 },
     { name: 'credits', label: 'Credits', type: 'number', required: true, defaultValue: editingSubject?.credits || 0 },
     { name: 'totalStudents', label: 'Total Students', type: 'number', required: true, defaultValue: editingSubject?.totalStudents || 0 },
-    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
+    // Make teacher optional on edit as well; assignment can happen via Staff creation/assignment flows
+    { name: 'teacher', label: 'Teacher (optional)', type: 'select', required: false, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
   ];
   // Form submit handlers
   const handleAddFormSubmit = async (data: Record<string, any>) => {
     try {
-      await createSubject({
+      // Build payload and omit teacher if not provided
+      const payload: CreateSubjectData = {
         name: data.name,
         abbreviation: data.abbreviation,
         code: data.code,
@@ -197,10 +200,12 @@ export default function ManageSubjects() {
         semester: Number(data.semester),
         credits: Number(data.credits),
         type: data.type,
-        teacher: data.teacher,
         totalStudents: Number(data.totalStudents),
         status: data.status,
-      });
+      };
+      if (data.teacher) payload.teacher = data.teacher;
+
+      await createSubject(payload);
       alert('Subject created successfully.');
       setIsAddModalOpen(false);
       fetchSubjects();
@@ -212,7 +217,7 @@ export default function ManageSubjects() {
   const handleEditFormSubmit = async (data: Record<string, any>) => {
     if (!editingSubject) return;
     try {
-      await updateSubject(String(editingSubject.id), {
+      const payload: Partial<CreateSubjectData> = {
         name: data.name,
         abbreviation: data.abbreviation,
         code: data.code,
@@ -220,10 +225,12 @@ export default function ManageSubjects() {
         semester: Number(data.semester),
         credits: Number(data.credits),
         type: data.type,
-        teacher: data.teacher,
         totalStudents: Number(data.totalStudents),
         status: data.status,
-      });
+      };
+      if (data.teacher) payload.teacher = data.teacher;
+
+      await updateSubject(String(editingSubject.id), payload);
       alert('Subject updated successfully.');
       handleCloseEditModal();
       fetchSubjects();
@@ -339,26 +346,7 @@ export default function ManageSubjects() {
                     >
                       <TrashIcon size={16} />
                     </button>
-                    <FormModal
-                      open={isAddModalOpen}
-                      onOpenChange={setIsAddModalOpen}
-                      title="Add New Subject"
-                      description="Fill in the details to add a new subject."
-                      fields={addSubjectFields}
-                      onSubmit={handleAddFormSubmit}
-                      submitText="Add Subject"
-                    />
-
-                    <FormModal
-                      key={editingSubject?.id || 'edit-modal'}
-                      open={isEditModalOpen}
-                      onOpenChange={handleCloseEditModal}
-                      title="Edit Subject Details"
-                      description={`Update details for ${editingSubject?.name}`}
-                      fields={getEditSubjectFields()}
-                      onSubmit={handleEditFormSubmit}
-                      submitText="Update Subject"
-                    />
+                    {/* Form modals are rendered once below (outside the table rows) */}
                   </div>
                 </td>
               </tr>
@@ -366,6 +354,27 @@ export default function ManageSubjects() {
           </tbody>
         </table>
       </div>
+      {/* Single modal instances rendered outside table rows so they exist even when subject list is empty */}
+      <FormModal
+        open={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        title="Add New Subject"
+        description="Fill in the details to add a new subject."
+        fields={addSubjectFields}
+        onSubmit={handleAddFormSubmit}
+        submitText="Add Subject"
+      />
+
+      <FormModal
+        key={editingSubject?.id || 'edit-modal'}
+        open={isEditModalOpen}
+        onOpenChange={handleCloseEditModal}
+        title="Edit Subject Details"
+        description={`Update details for ${editingSubject?.name}`}
+        fields={getEditSubjectFields()}
+        onSubmit={handleEditFormSubmit}
+        submitText="Update Subject"
+      />
     </div>
   );
 }

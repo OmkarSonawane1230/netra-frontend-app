@@ -70,6 +70,22 @@ export interface SubjectData {
   [key: string]: any;
 }
 
+// Payload used when creating a subject from the frontend. Many fields are optional
+// because HOD may create a subject without assigning a teacher yet.
+export interface CreateSubjectData {
+  name: string;
+  abbreviation?: string;
+  code?: string;
+  department?: string;
+  semester?: number;
+  credits?: number;
+  type?: string;
+  teacher?: string;
+  totalStudents?: number;
+  status?: string;
+  [key: string]: any;
+}
+
 export interface StaffData {
   name: string;
   username: string;
@@ -90,7 +106,7 @@ export interface PasswordData {
 }
 
 // This should be defined in a .env.local file in your frontend's root directory
-const API_URL: string = process.env.NEXT_PUBLIC_API_URL || 'https://curly-fortnight-9765qxr65vxp2xx6q-8000.app.github.dev';
+const API_URL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // --- Helper Function to get Auth Headers ---
 const getAuthHeaders = (): Record<string, string> => {
@@ -437,7 +453,7 @@ export const getDepartments = async (): Promise<DepartmentData[]> => {
     }
 };
 
-export const createSubject = async (subjectData: SubjectData): Promise<any> => {
+export const createSubject = async (subjectData: CreateSubjectData): Promise<any> => {
     try {
         const response = await fetch(`${API_URL}/api/hod/subjects`, {
             method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(subjectData),
