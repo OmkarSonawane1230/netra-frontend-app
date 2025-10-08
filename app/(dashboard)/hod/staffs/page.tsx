@@ -13,11 +13,14 @@ import {
 import { SearchIcon, PlusIcon, EditIcon, TrashIcon, EyeIcon } from 'lucide-react';
 import { FormModal, FormField } from '@/app/components/FormModal';
 import styles from '@/app/styles/views/StaffManagement.module.css';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function StaffManagement() {
 
+  const { user } = useAuth();
+
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [selectedDept, setSelectedDept] = useState<string>('all');
+  // Removed department filter for HOD
 
   interface Staff {
     id: number;
@@ -87,16 +90,6 @@ export default function StaffManagement() {
     { name: 'username', label: 'Username', type: 'text', placeholder: 'e.g., johndoe', required: true },
     { name: 'password', label: 'Password', type: 'text', placeholder: 'Enter a secure password', required: true },
     {
-      name: 'department', label: 'Department', type: 'select', required: true, options: [
-        { value: 'RE', label: 'RE' },
-        { value: 'CO', label: 'CO' },
-        { value: 'IT', label: 'IT' },
-        { value: 'EE', label: 'EE' },
-        { value: 'ME', label: 'ME' },
-        { value: 'CE', label: 'CE' },
-      ]
-    },
-    {
       name: 'role', label: 'Role', type: 'select', required: true, options: [
         { value: 'class-teacher', label: 'Class Teacher' },
         { value: 'staff', label: 'Staff' },
@@ -116,16 +109,6 @@ export default function StaffManagement() {
     { name: 'full_name', label: 'Full Name', type: 'text', required: true, defaultValue: editingStaff?.full_name || '' },
     { name: 'username', label: 'Username', type: 'text', required: true, defaultValue: editingStaff?.username || '' },
     { name: 'password', label: 'Password', type: 'text', required: false, placeholder: 'Enter a password (leave blank to keep unchanged)' },
-    {
-      name: 'department', label: 'Department', type: 'select', required: true, options: [
-        { value: 'RE', label: 'RE' },
-        { value: 'CO', label: 'CO' },
-        { value: 'IT', label: 'IT' },
-        { value: 'EE', label: 'EE' },
-        { value: 'ME', label: 'ME' },
-        { value: 'CE', label: 'CE' },
-      ], defaultValue: editingStaff?.department || ''
-    },
     {
       name: 'role', label: 'Role', type: 'select', required: true, options: [
         { value: 'class-teacher', label: 'Class Teacher' },
@@ -148,7 +131,7 @@ export default function StaffManagement() {
   const handleAddStaff = () => setIsAddModalOpen(true);
   const handleAddFormSubmit = async (data: Record<string, any>) => {
     // Client-side validation for required fields
-    const requiredFields = ['full_name', 'username', 'department', 'role', 'password'];
+  const requiredFields = ['full_name', 'username', 'role', 'password'];
     const missingFields = requiredFields.filter(field => !data[field] || String(data[field]).trim() === '');
     if (missingFields.length > 0) {
       const errorMsg = `Missing required fields: ${missingFields.join(', ')}`;
@@ -161,7 +144,7 @@ export default function StaffManagement() {
       const formData = new FormData();
       formData.append('username', data.username);
       formData.append('full_name', data.full_name);
-      formData.append('department', data.department);
+  formData.append('department', user?.department || '');
       formData.append('role', data.role);
       formData.append('password', data.password);
       // assigned_class can be null or string
@@ -211,7 +194,7 @@ export default function StaffManagement() {
   };
   const handleEditFormSubmit = async (data: Record<string, any>) => {
     // Client-side validation for required fields
-    const requiredFields = ['full_name', 'username', 'department', 'role'];
+  const requiredFields = ['full_name', 'username', 'role'];
     const missingFields = requiredFields.filter(field => !data[field] || String(data[field]).trim() === '');
     if (!editingStaff || !editingStaff.id) return;
     if (missingFields.length > 0) {
@@ -225,7 +208,7 @@ export default function StaffManagement() {
       const payload: Record<string, any> = {
         username: data.username,
         full_name: data.full_name,
-        department: data.department,
+        department: user?.department || '',
         role: data.role,
         assigned_class: data.assigned_class ?? '',
         is_class_teacher: data.role === 'class-teacher',
@@ -256,7 +239,6 @@ export default function StaffManagement() {
   };
 
   const filteredStaff = staff.filter(member =>
-    (selectedDept === 'all' || member.department === selectedDept) &&
     (member.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.username.toLowerCase().includes(searchTerm.toLowerCase()))
   );
@@ -288,27 +270,14 @@ export default function StaffManagement() {
           />
         </div>
 
-        <select
-          value={selectedDept}
-          onChange={(e) => setSelectedDept(e.target.value)}
-          className={styles.filterSelect}
-          data-testid="select-dept-filter"
-        >
-          <option value="all">All Departments</option>
-          <option value="Mathematics">Mathematics</option>
-          <option value="Physics">Physics</option>
-          <option value="Chemistry">Chemistry</option>
-          <option value="Biology">Biology</option>
-        </select>
+        {/* Department filter removed for HOD */}
       </div>
 
       <div className={styles.tableContainer}>
         <table className={styles.staffTable} data-testid="table-staff">
           <thead>
             <tr>
-              <th>Username</th>
               <th>Full Name</th>
-              <th>Department</th>
               <th>Role</th>
               <th>Assigned Class</th>
               <th>Actions</th>
@@ -317,9 +286,7 @@ export default function StaffManagement() {
           <tbody>
             {filteredStaff.map((member) => (
               <tr key={member.id} data-testid={`row-staff-${member.id}`}>
-                <td>{member.username}</td>
                 <td>{member.full_name}</td>
-                <td>{member.department}</td>
                 <td>{member.role}</td>
                 <td>{member.assigned_class || '-'}</td>
                 <td>

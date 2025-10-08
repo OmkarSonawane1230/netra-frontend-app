@@ -48,18 +48,18 @@ export default function ManageSubjects() {
       // Map API data to Subject shape if needed
       const mapped: Subject[] = Array.isArray(data)
         ? data.map((sub: any) => ({
-            id: Number(sub.id),
-            subjectCode: sub.subjectCode || sub.code || '',
-            name: sub.name || '',
-            department: sub.department || '',
-            semester: Number(sub.semester) || 1,
-            credits: Number(sub.credits) || 0,
-            type: sub.type || '',
-            teacher: sub.teacher || '',
-            totalStudents: Number(sub.totalStudents) || 0,
-            status: sub.status || 'active',
-            abbreviation: sub.abbreviation || '',
-          })
+          id: Number(sub.id),
+          subjectCode: sub.subjectCode || sub.code || '',
+          name: sub.name || '',
+          department: sub.department || '',
+          semester: Number(sub.semester) || 1,
+          credits: Number(sub.credits) || 0,
+          type: sub.type || '',
+          teacher: sub.teacher || '',
+          totalStudents: Number(sub.totalStudents) || 0,
+          status: sub.status || 'active',
+          abbreviation: sub.abbreviation || '',
+        })
         )
         : [];
       setSubjects(mapped);
@@ -75,7 +75,7 @@ export default function ManageSubjects() {
       try {
         const staffData = await getStaff();
         setStaff(Array.isArray(staffData) ? staffData : []);
-      } catch {}
+      } catch { }
     })();
   }, [fetchSubjects]);
 
@@ -169,23 +169,23 @@ export default function ManageSubjects() {
   };
   // Form fields for add/edit
   const addSubjectFields: FormField[] = [
-  { name: 'name', label: 'Subject Name', type: 'text', placeholder: 'e.g., Calculus I', required: true },
-  { name: 'abbreviation', label: 'Abbreviation', type: 'text', placeholder: 'e.g., MATH101', required: true },
-  { name: 'code', label: 'Subject Code', type: 'text', placeholder: 'e.g., MATH101', required: true },
-  { name: 'semester', label: 'Semester', type: 'number', placeholder: 'e.g., 1', required: true },
-  { name: 'credits', label: 'Credits', type: 'number', placeholder: 'e.g., 4', required: true },
-  { name: 'totalStudents', label: 'Total Students', type: 'number', placeholder: 'e.g., 45', required: true },
-  { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })) },
+    { name: 'name', label: 'Subject Name', type: 'text', placeholder: 'e.g., Calculus I', required: true },
+    { name: 'abbreviation', label: 'Abbreviation', type: 'text', placeholder: 'e.g., MATH101', required: true },
+    { name: 'code', label: 'Subject Code', type: 'text', placeholder: 'e.g., MATH101', required: true },
+    { name: 'semester', label: 'Semester', type: 'number', placeholder: 'e.g., 1', required: true },
+    { name: 'credits', label: 'Credits', type: 'number', placeholder: 'e.g., 4', required: true },
+    { name: 'totalStudents', label: 'Total Students', type: 'number', placeholder: 'e.g., 45', required: true },
+    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })) },
   ];
 
   const getEditSubjectFields = (): FormField[] => [
-  { name: 'name', label: 'Subject Name', type: 'text', required: true, defaultValue: editingSubject?.name || '' },
-  { name: 'abbreviation', label: 'Abbreviation', type: 'text', required: true, defaultValue: editingSubject?.abbreviation || '' },
-  { name: 'code', label: 'Subject Code', type: 'text', required: true, defaultValue: editingSubject?.subjectCode || '' },
-  { name: 'semester', label: 'Semester', type: 'number', required: true, defaultValue: editingSubject?.semester || 1 },
-  { name: 'credits', label: 'Credits', type: 'number', required: true, defaultValue: editingSubject?.credits || 0 },
-  { name: 'totalStudents', label: 'Total Students', type: 'number', required: true, defaultValue: editingSubject?.totalStudents || 0 },
-  { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
+    { name: 'name', label: 'Subject Name', type: 'text', required: true, defaultValue: editingSubject?.name || '' },
+    { name: 'abbreviation', label: 'Abbreviation', type: 'text', required: true, defaultValue: editingSubject?.abbreviation || '' },
+    { name: 'code', label: 'Subject Code', type: 'text', required: true, defaultValue: editingSubject?.subjectCode || '' },
+    { name: 'semester', label: 'Semester', type: 'number', required: true, defaultValue: editingSubject?.semester || 1 },
+    { name: 'credits', label: 'Credits', type: 'number', required: true, defaultValue: editingSubject?.credits || 0 },
+    { name: 'totalStudents', label: 'Total Students', type: 'number', required: true, defaultValue: editingSubject?.totalStudents || 0 },
+    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
   ];
   // Form submit handlers
   const handleAddFormSubmit = async (data: Record<string, any>) => {
@@ -237,7 +237,7 @@ export default function ManageSubjects() {
     <div className={styles.manageSubjects}>
       <div className={styles.header}>
         <h2 className={styles.title}>Manage Subjects</h2>
-        <button 
+        <button
           className={styles.primaryButton}
           onClick={handleAddSubject}
           data-testid="button-add-subject"
@@ -322,44 +322,22 @@ export default function ManageSubjects() {
         <table className={styles.subjectsTable}>
           <thead>
             <tr>
-              <th>Subject Code</th>
               <th>Subject Name</th>
-              <th>Department</th>
               <th>Semester</th>
-              <th>Credits</th>
-              <th>Type</th>
-              <th>Teacher</th>
-              <th>Students</th>
-              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredSubjects.map((subject) => (
               <tr key={subject.id} data-testid={`row-subject-${subject.id}`}>
-                <td className={styles.subjectCode} data-testid={`text-code-${subject.id}`}>
-                  {subject.subjectCode}
-                </td>
                 <td className={styles.subjectName} data-testid={`text-name-${subject.id}`}>
                   {subject.name}
                 </td>
-                <td data-testid={`text-department-${subject.id}`}>{subject.department}</td>
                 <td data-testid={`text-semester-${subject.id}`}>Semester {subject.semester}</td>
-                <td data-testid={`text-credits-${subject.id}`}>{subject.credits}</td>
-                <td data-testid={`text-type-${subject.id}`}>
-                  <span className={styles.typeBadge}>{subject.type}</span>
-                </td>
-                <td data-testid={`text-teacher-${subject.id}`}>{subject.teacher}</td>
-                <td data-testid={`text-students-${subject.id}`}>{subject.totalStudents}</td>
-                <td data-testid={`text-status-${subject.id}`}>
-                  <span className={`${styles.statusBadge} ${styles[subject.status]}`}>
-                    {subject.status}
-                  </span>
-                </td>
                 <td>
                   <div className={styles.actionButtons}>
                     {/* Remove handleViewSubject button since not implemented */}
-                    <button 
+                    <button
                       className={styles.actionButton}
                       onClick={() => handleEditSubject(subject.id)}
                       data-testid={`button-edit-${subject.id}`}
@@ -367,7 +345,7 @@ export default function ManageSubjects() {
                     >
                       <EditIcon size={16} />
                     </button>
-                    <button 
+                    <button
                       className={`${styles.actionButton} ${styles.deleteButton}`}
                       onClick={() => handleDeleteSubject(subject.id)}
                       data-testid={`button-delete-${subject.id}`}
@@ -375,26 +353,26 @@ export default function ManageSubjects() {
                     >
                       <TrashIcon size={16} />
                     </button>
-      <FormModal
-        open={isAddModalOpen}
-        onOpenChange={setIsAddModalOpen}
-        title="Add New Subject"
-        description="Fill in the details to add a new subject."
-        fields={addSubjectFields}
-        onSubmit={handleAddFormSubmit}
-        submitText="Add Subject"
-      />
+                    <FormModal
+                      open={isAddModalOpen}
+                      onOpenChange={setIsAddModalOpen}
+                      title="Add New Subject"
+                      description="Fill in the details to add a new subject."
+                      fields={addSubjectFields}
+                      onSubmit={handleAddFormSubmit}
+                      submitText="Add Subject"
+                    />
 
-      <FormModal
-        key={editingSubject?.id || 'edit-modal'}
-        open={isEditModalOpen}
-        onOpenChange={handleCloseEditModal}
-        title="Edit Subject Details"
-        description={`Update details for ${editingSubject?.name}`}
-        fields={getEditSubjectFields()}
-        onSubmit={handleEditFormSubmit}
-        submitText="Update Subject"
-      />
+                    <FormModal
+                      key={editingSubject?.id || 'edit-modal'}
+                      open={isEditModalOpen}
+                      onOpenChange={handleCloseEditModal}
+                      title="Edit Subject Details"
+                      description={`Update details for ${editingSubject?.name}`}
+                      fields={getEditSubjectFields()}
+                      onSubmit={handleEditFormSubmit}
+                      submitText="Update Subject"
+                    />
                   </div>
                 </td>
               </tr>
