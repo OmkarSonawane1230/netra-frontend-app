@@ -175,7 +175,7 @@ export default function ManageSubjects() {
     { name: 'semester', label: 'Semester', type: 'number', placeholder: 'e.g., 1', required: true },
     { name: 'credits', label: 'Credits', type: 'number', placeholder: 'e.g., 4', required: true },
     { name: 'totalStudents', label: 'Total Students', type: 'number', placeholder: 'e.g., 45', required: true },
-    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })) },
+    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })) },
   ];
 
   const getEditSubjectFields = (): FormField[] => [
@@ -185,7 +185,7 @@ export default function ManageSubjects() {
     { name: 'semester', label: 'Semester', type: 'number', required: true, defaultValue: editingSubject?.semester || 1 },
     { name: 'credits', label: 'Credits', type: 'number', required: true, defaultValue: editingSubject?.credits || 0 },
     { name: 'totalStudents', label: 'Total Students', type: 'number', required: true, defaultValue: editingSubject?.totalStudents || 0 },
-    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'class-teacher').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
+    { name: 'teacher', label: 'Teacher', type: 'select', required: true, options: staff.filter(s => s.role === 'staff' || s.role === 'mentor').map(s => ({ value: s.full_name, label: s.full_name })), defaultValue: editingSubject?.teacher || '' },
   ];
   // Form submit handlers
   const handleAddFormSubmit = async (data: Record<string, any>) => {

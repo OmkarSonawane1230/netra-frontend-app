@@ -4,11 +4,10 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 
 import { useAuth } from '@/app/context/AuthContext';
 import { getTimetable, saveTimetable, getSubjects, getStaff, getAvailableClasses } from '@/services/api';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/app/components/ui/Card';
 import { Button } from '@/app/components/ui/Button';
-import { FormModal, FormField } from '@/app/components/FormModal';
+import { FormModal } from '@/app/components/FormModal';
 
-import { PlusIcon, EditIcon, TrashIcon, CalendarIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon, CalendarIcon } from 'lucide-react';
 import styles from '@/app/styles/views/TimetableManagement.module.css';
 
 // A template for a new, empty timetable for a class
@@ -38,6 +37,37 @@ const createNewTimetable = (): Timetable => ({
 });
 
 export default function TimetableManagement() {
+  // Add a new lecture to a time slot
+  const handleAddLecture = (day: string, slot: string) => {
+    const timetable = { ...activeTimetable };
+    const lectures = timetable.schedule[day]?.[slot] || [];
+    lectures.push({
+      id: Date.now(),
+      subject: '',
+      teacher: '',
+      hall: '',
+      class: activeTab,
+    });
+    timetable.schedule[day][slot] = lectures;
+    handleUpdateActiveTimetable(timetable);
+  };
+
+  // Delete a specific lecture from a time slot
+  const handleDeleteLecture = (day: string, slot: string, lectureId: number) => {
+    const timetable = { ...activeTimetable };
+    let lectures = timetable.schedule[day]?.[slot] || [];
+    lectures = lectures.filter(lec => lec.id !== lectureId);
+    timetable.schedule[day][slot] = lectures;
+    // If no lectures remain in this slot for this day, remove the slot from all days and from timeSlots
+    if (lectures.length === 0) {
+      timetable.timeSlots = timetable.timeSlots.filter(s => s !== slot);
+      Object.keys(timetable.schedule).forEach(d => {
+        delete timetable.schedule[d][slot];
+      });
+    }
+    handleUpdateActiveTimetable(timetable);
+  };
+  // Add a new lecture to a time slot
   // Tab navigation states
   const [activeTab, setActiveTab] = useState<string>(''); // FE, SE, TE, etc.
   const [availableClasses, setAvailableClasses] = useState<string[]>([]);
@@ -51,11 +81,8 @@ export default function TimetableManagement() {
   const [newTimeSlot, setNewTimeSlot] = useState<{ start: string; end: string }>({ start: '09:00', end: '10:00' });
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Remove unused states
-  // const [selectedClass, setSelectedClass] = useState('10A');
-  // const [selectedDay, setSelectedDay] = useState('monday');
 
-  // js code start
+  // --- Timetable Management Logic ---
 
   const { user } = useAuth();
 
@@ -179,39 +206,34 @@ export default function TimetableManagement() {
     }));
   };
 
-  const handleAddTimeSlot = () => {
-    const { start, end } = newTimeSlot;
+  const handleAddTimeSlot = (start: string, end: string) => {
     if (!start || !end || start >= end) {
       alert('Invalid time slot. End time must be after start time.');
       return;
     }
     const newSlot = `${start}-${end}`;
     const timetable = { ...activeTimetable };
-    // Add to timeSlots if not present
     if (!timetable.timeSlots.includes(newSlot)) {
       timetable.timeSlots.push(newSlot);
       timetable.timeSlots.sort();
     }
-    // Ensure slot exists for all days
     Object.keys(timetable.schedule).forEach(day => {
       if (!timetable.schedule[day][newSlot]) {
         timetable.schedule[day][newSlot] = [];
       }
     });
-    // Add lecture only for selected day
-    timetable.schedule[selectedDay][newSlot] = [{
-      id: Date.now(),
-      subject: '',
-      teacher: '',
-      hall: '',
-      class: activeTab,
-    }];
+    if (!timetable.schedule[selectedDay][newSlot] || timetable.schedule[selectedDay][newSlot].length === 0) {
+      timetable.schedule[selectedDay][newSlot] = [{
+        id: Date.now(),
+        subject: '',
+        teacher: '',
+        hall: '',
+        class: activeTab,
+      }];
+    }
     handleUpdateActiveTimetable(timetable);
     setIsModalOpen(false);
   };
-    
-
-  // js code end
 
   // --- Tab Navigation for Timetable Classes ---
   if (isLoading) {
@@ -225,7 +247,7 @@ export default function TimetableManagement() {
         </div>
         {/* Skeleton Tabs */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          {[1,2,3].map(i => (
+          {[1, 2, 3].map(i => (
             <div key={i} style={{ width: 80, height: 32, borderRadius: 8, background: '#e5e7eb', opacity: 0.6 }} />
           ))}
         </div>
@@ -248,7 +270,7 @@ export default function TimetableManagement() {
                 <th style={{ padding: '10px 16px', fontWeight: 600, fontSize: 15, color: '#334155', textAlign: 'left' }}>
                   <div style={{ width: 60, height: 16, background: '#e5e7eb', borderRadius: 6, opacity: 0.6 }} />
                 </th>
-                {[1,2,3,4].map(i => (
+                {[1, 2, 3, 4].map(i => (
                   <th key={i} style={{ padding: '10px 16px', fontWeight: 500, fontSize: 14, color: '#334155' }}>
                     <div style={{ width: 60, height: 16, background: '#e5e7eb', borderRadius: 6, opacity: 0.6 }} />
                   </th>
@@ -259,7 +281,7 @@ export default function TimetableManagement() {
               {[selectedDay].map(day => (
                 <tr key={day} style={{ background: '#fff' }}>
                   <td style={{ padding: '10px 16px', fontWeight: 500, color: '#334155', background: '#f1f5f9', borderRadius: '0 0 0 12px', textAlign: 'center' }}>{day}</td>
-                  {[1,2,3,4].map(i => (
+                  {[1, 2, 3, 4].map(i => (
                     <td key={i} style={{ padding: '8px 8px', minWidth: 180, borderBottom: '1px solid #e5e7eb', background: '#fff' }}>
                       <div style={{ width: '100%', height: 32, background: '#e5e7eb', borderRadius: 8, opacity: 0.4 }} />
                     </td>
@@ -278,31 +300,20 @@ export default function TimetableManagement() {
 
   return (
     <div className={styles.timetableManagement}>
-      <div className={styles.header} style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: 12, marginBottom: 8 }}>
+      <div className={styles.header}>
         <span className={styles.title}>
-          <CalendarIcon size={22} style={{ marginRight: 8, verticalAlign: 'middle' }} />
+          <CalendarIcon size={22} className={styles.calendarIcon} />
           Timetable for {activeTab}
         </span>
       </div>
       {/* Tab Navigation */}
-      <div className={styles.tabContainer} style={{ marginBottom: 16 }}>
-        <div className={styles.tabs} style={{ gap: 8, display: 'flex', flexWrap: 'wrap' }}>
+      <div className={styles.tabContainer}>
+        <div className={styles.tabs}>
           {availableClasses.map((className) => (
             <Button
               key={className}
               onClick={() => setActiveTab(className)}
               className={activeTab === className ? styles.activeTab : styles.tabButton}
-              style={{
-                fontWeight: activeTab === className ? 'bold' : 'normal',
-                borderRadius: 8,
-                background: activeTab === className ? '#e5e7eb' : '#fff',
-                color: '#334155',
-                border: '1px solid #e5e7eb',
-                minWidth: 80,
-                minHeight: 32,
-                boxShadow: activeTab === className ? '0 2px 8px rgba(30,41,59,0.08)' : 'none',
-                transition: 'all 0.2s',
-              }}
             >
               {className}
             </Button>
@@ -311,158 +322,117 @@ export default function TimetableManagement() {
       </div>
 
       {/* Actions + Day Selector */}
-      <div className={styles.actions} style={{ display: 'flex', gap: 12, marginBottom: 16, alignItems: 'center' }}>
-        <label htmlFor="day-select" style={{ fontWeight: 500, marginRight: 8 }}>Day:</label>
+      <div className={styles.actions}>
+        <label htmlFor="day-select" className={styles.dayLabel}>Day:</label>
         <select
           id="day-select"
           value={selectedDay}
           onChange={e => setSelectedDay(e.target.value)}
-          style={{
-            borderRadius: 6,
-            padding: '6px 12px',
-            fontSize: 15,
-            background: '#f8fafc',
-            border: '1px solid #cbd5e1',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-            outline: 'none',
-            transition: 'border 0.2s',
-            marginRight: 16,
-          }}
-          onFocus={e => e.currentTarget.style.border = '1.5px solid #2563eb'}
-          onBlur={e => e.currentTarget.style.border = '1px solid #cbd5e1'}
+          className={styles.daySelect}
         >
-          {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"].map(day => (
+          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
             <option key={day} value={day}>{day}</option>
           ))}
         </select>
         <Button onClick={() => setIsModalOpen(true)} className={styles.primaryButton}>
-          <PlusIcon size={18} style={{ marginRight: 4 }} /> Add Time Slot
+          <PlusIcon size={18} className={styles.plusIcon} /> Add Time Slot
         </Button>
-        <Button onClick={handleSaveTimetable} className={styles.primaryButton} style={{ background: '#2563eb' }}>
+        <Button onClick={handleSaveTimetable} className={styles.saveButton}>
           Save Timetable
         </Button>
       </div>
 
       {/* Timetable Grid for selected day only */}
-      <div className={styles.gridContainer} style={{ overflowX: 'auto', borderRadius: 12, background: '#fff', boxShadow: '0 1px 4px rgba(30,41,59,0.04)' }}>
-        <table className={styles.timetableGrid} style={{ width: '100%', borderCollapse: 'collapse', borderSpacing: 0 }}>
+      <div className={styles.gridContainer}>
+        <table className={styles.timetableGrid}>
           <thead>
             <tr className={styles.dayHeader}>
-              <th colSpan={6} style={{ textAlign: 'center', fontWeight: 600, fontSize: 16, color: '#334155', padding: '16px 0' }}>{selectedDay}</th>
+              <th colSpan={6} className={styles.dayTitle}>{selectedDay}</th>
             </tr>
-            <tr style={{ background: '#e5e7eb' }}>
-              <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: 15, color: '#334155', textAlign: 'left' }}>Time</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: 15, color: '#334155', textAlign: 'left' }}>Subject</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: 15, color: '#334155', textAlign: 'left' }}>Teacher</th>
-              <th style={{ padding: '12px 16px', fontWeight: 600, fontSize: 15, color: '#334155', textAlign: 'left' }}>Hall</th>
-              <th style={{ padding: '12px 16px', textAlign: 'center' }}></th>
+            <tr className={styles.gridHeader}>
+              <th className={styles.gridHeaderCell}>Time</th>
+              <th className={styles.gridHeaderCell}>Subject</th>
+              <th className={styles.gridHeaderCell}>Teacher</th>
+              <th className={styles.gridHeaderCell}>Hall</th>
+              <th className={styles.gridHeaderCell}></th>
             </tr>
           </thead>
           <tbody>
             {activeTimetable.timeSlots.map((slot) => {
-              let lectures = activeTimetable.schedule[selectedDay]?.[slot];
+              const lectures = activeTimetable.schedule[selectedDay]?.[slot];
               if (!lectures || lectures.length === 0) {
-                lectures = [{
-                  id: Date.now(),
-                  subject: '',
-                  teacher: '',
-                  hall: '',
-                  class: activeTab,
-                }];
-                activeTimetable.schedule[selectedDay][slot] = lectures;
+                // Don't render anything for empty slots
+                return null;
               }
-              const foundLecture = lectures[0];
-              if (foundLecture && (foundLecture.subject === 'Break' || foundLecture.subject === 'Lunch Break')) {
+              // If first lecture is a break, render as before
+              const isBreak = lectures[0] && (lectures[0].subject === 'Break' || lectures[0].subject === 'Lunch Break');
+              if (isBreak) {
                 return (
-                  <tr key={selectedDay + slot} style={{ background: '#fffbe6' }}>
-                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>{slot}</td>
-                    <td colSpan={3} style={{ textAlign: 'center', color: '#f59e42', fontWeight: 600, fontSize: 16 }}>{foundLecture.subject}</td>
+                  <tr key={selectedDay + slot} className={styles.breakRow}>
+                    <td className={styles.breakTime}>{slot}</td>
+                    <td colSpan={3} className={styles.breakSubject}>{lectures[0].subject}</td>
                     <td></td>
                   </tr>
                 );
               }
-              return (
-                <tr key={selectedDay + slot} style={{ background: '#fff' }}>
-                  <td style={{ padding: '12px 16px', fontWeight: 500 }}>{slot}</td>
-                  <td style={{ padding: '12px 16px', fontWeight: 600 }}>
-                    <select
-                      value={foundLecture.subject}
-                      onChange={e => handleLectureChange(selectedDay, slot, foundLecture.id, 'subject', e.target.value)}
-                      style={{
-                        borderRadius: 6,
-                        padding: '6px 12px',
-                        fontSize: 15,
-                        minWidth: 120,
-                        background: '#f8fafc',
-                        border: '1px solid #cbd5e1',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                        outline: 'none',
-                        transition: 'border 0.2s',
-                      }}
-                      onFocus={e => e.currentTarget.style.border = '1.5px solid #2563eb'}
-                      onBlur={e => e.currentTarget.style.border = '1px solid #cbd5e1'}
-                    >
-                      <option value="">Select Subject</option>
-                      {subjects.map(s => <option key={s.id} value={s.abbreviation}>{s.name} ({s.abbreviation})</option>)}
-                    </select>
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <select
-                      value={foundLecture.teacher}
-                      onChange={e => handleLectureChange(selectedDay, slot, foundLecture.id, 'teacher', e.target.value)}
-                      style={{
-                        borderRadius: 6,
-                        padding: '6px 12px',
-                        fontSize: 15,
-                        minWidth: 120,
-                        background: '#f8fafc',
-                        border: '1px solid #cbd5e1',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                        outline: 'none',
-                        transition: 'border 0.2s',
-                      }}
-                      onFocus={e => e.currentTarget.style.border = '1.5px solid #2563eb'}
-                      onBlur={e => e.currentTarget.style.border = '1px solid #cbd5e1'}
-                    >
-                      <option value="">Select Teacher</option>
-                      {staff.map(s => <option key={s.id} value={s.full_name}>{s.full_name}</option>)}
-                    </select>
-                  </td>
-                  <td style={{ padding: '12px 16px' }}>
-                    <input
-                      type="text"
-                      value={foundLecture.hall}
-                      onChange={e => handleLectureChange(selectedDay, slot, foundLecture.id, 'hall', e.target.value)}
-                      style={{
-                        borderRadius: 6,
-                        padding: '6px 12px',
-                        fontSize: 15,
-                        minWidth: 60,
-                        background: '#f8fafc',
-                        border: '1px solid #cbd5e1',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                        outline: 'none',
-                        transition: 'border 0.2s',
-                      }}
-                      onFocus={e => e.currentTarget.style.border = '1.5px solid #2563eb'}
-                      onBlur={e => e.currentTarget.style.border = '1px solid #cbd5e1'}
-                      placeholder="Hall No."
-                    />
-                  </td>
-                  <td style={{ textAlign: 'center', padding: '12px 8px' }}>
-                    <div className={styles.actionButtons}>
-                      <button
-                        className={`${styles.actionButton} ${styles.deleteButton}`}
-                        onClick={() => handleRemoveTimeSlot(slot)}
-                        title="Delete Slot"
-                        data-testid={`button-delete-${slot}`}
+              return [
+                ...lectures.map((lecture, idx) => (
+                  <tr key={selectedDay + slot + '-' + lecture.id} className={idx % 2 === 0 ? styles.evenRow : styles.oddRow}>
+                    {idx === 0 && (
+                      <td className={styles.timeCell} rowSpan={lectures.length}>{slot}</td>
+                    )}
+                    <td className={styles.subjectCell}>
+                      <select
+                        value={lecture.subject}
+                        onChange={e => handleLectureChange(selectedDay, slot, lecture.id, 'subject', e.target.value)}
+                        className={styles.subjectSelect}
                       >
-                        <TrashIcon size={16} />
-                      </button>
-                    </div>
+                        <option value="">Select Subject</option>
+                        {subjects.map(s => <option key={s.id} value={s.abbreviation}>{s.name} ({s.abbreviation})</option>)}
+                      </select>
+                    </td>
+                    <td className={styles.teacherCell}>
+                      <select
+                        value={lecture.teacher}
+                        onChange={e => handleLectureChange(selectedDay, slot, lecture.id, 'teacher', e.target.value)}
+                        className={styles.teacherSelect}
+                      >
+                        <option value="">Select Teacher</option>
+                        {staff.map(s => <option key={s.id} value={s.full_name}>{s.full_name}</option>)}
+                      </select>
+                    </td>
+                    <td className={styles.hallCell}>
+                      <input
+                        type="text"
+                        value={lecture.hall}
+                        onChange={e => handleLectureChange(selectedDay, slot, lecture.id, 'hall', e.target.value)}
+                        className={styles.hallInput}
+                        placeholder="Hall No."
+                      />
+                    </td>
+                    <td className={styles.actionCell}>
+                      <div className={styles.actionButtons}>
+                        <button
+                          className={`${styles.actionButton} ${styles.deleteButton}`}
+                          onClick={() => handleDeleteLecture(selectedDay, slot, lecture.id)}
+                          title="Delete Lecture"
+                          data-testid={`button-delete-lecture-${slot}-${lecture.id}`}
+                        >
+                          <TrashIcon size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )),
+                // Add button row for new lecture
+                <tr key={selectedDay + slot + '-add'}>
+                  <td colSpan={5} className={styles.addLectureCell}>
+                    <Button onClick={() => handleAddLecture(selectedDay, slot)} className={styles.addLectureButton}>
+                      <PlusIcon size={16} className={styles.plusIcon} /> Add Lecture
+                    </Button>
                   </td>
                 </tr>
-              );
+              ];
             })}
           </tbody>
         </table>
@@ -478,7 +448,7 @@ export default function TimetableManagement() {
           {
             name: 'start',
             label: 'Start Time',
-            type: 'text',
+            type: 'time',
             placeholder: 'HH:MM',
             required: true,
             defaultValue: newTimeSlot.start,
@@ -486,15 +456,14 @@ export default function TimetableManagement() {
           {
             name: 'end',
             label: 'End Time',
-            type: 'text',
+            type: 'time',
             placeholder: 'HH:MM',
             required: true,
             defaultValue: newTimeSlot.end,
           },
         ]}
         onSubmit={(data) => {
-          setNewTimeSlot({ start: data.start, end: data.end });
-          handleAddTimeSlot();
+          handleAddTimeSlot(data.start, data.end);
         }}
         submitText="Add Slot"
         cancelText="Cancel"

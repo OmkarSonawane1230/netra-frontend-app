@@ -18,7 +18,7 @@ import styles from '@/app/styles/components/FormModal.module.css';
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'number' | 'tel' | 'date' | 'select' | 'textarea';
+  type: 'text' | 'email' | 'number' | 'tel' | 'date' | 'select' | 'textarea' | 'time';
   placeholder?: string;
   required?: boolean;
   options?: { value: string; label: string }[];
@@ -144,7 +144,7 @@ export function FormModal({
           </div>
         );
 
-      case 'textarea':
+  case 'textarea':
         return (
           <div key={field.name} className={styles.formGroup}>
             <Label htmlFor={fieldId} className={styles.label}>
@@ -167,6 +167,28 @@ export function FormModal({
           </div>
         );
 
+      case 'time':
+        return (
+          <div key={field.name} className={styles.formGroup}>
+            <Label htmlFor={fieldId} className={styles.label}>
+              {field.label}
+              {field.required && <span className={styles.required}>*</span>}
+            </Label>
+            <input
+              id={fieldId}
+              name={field.name}
+              type="time"
+              value={formData[field.name]}
+              onChange={(e) => handleInputChange(field.name, e.target.value)}
+              placeholder={field.placeholder}
+              required={field.required}
+              disabled={isLoading}
+              className={hasError ? styles.error : ''}
+              data-testid={`input-${field.name}`}
+            />
+            {hasError && <span className={styles.errorText}>{errors[field.name]}</span>}
+          </div>
+        );
       default:
         return (
           <div key={field.name} className={styles.formGroup}>
