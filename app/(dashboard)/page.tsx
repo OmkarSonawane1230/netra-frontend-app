@@ -2,6 +2,8 @@
 
 import { UsersIcon, ClipboardListIcon, BookOpenIcon, TrendingUpIcon } from 'lucide-react';
 import styles from '@/app/styles/views/DashboardOverview.module.css';
+import SubjectSummaryCard from '@/app/components/charts/SubjectSummaryCard';
+import { useAuth } from '@/app/context/AuthContext';
 
 export default function DashboardOverview() {
   // TODO: remove mock data functionality - replace with real API calls
@@ -118,8 +120,31 @@ export default function DashboardOverview() {
               View Timetable
             </button>
           </div>
+          {/* Monthly summary card (previous month) */}
+          <div style={{ marginTop: 16 }}>
+            {/* Only show summary if user is authenticated to avoid 401 API calls */}
+            <AuthSummaryPlaceholder />
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+function AuthSummaryPlaceholder() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return (
+      <div style={{ border: '1px solid var(--muted)', borderRadius: 8, padding: 12, background: 'var(--card)' }}>
+        <h3 style={{ margin: '0 0 8px 0' }}>Subject-wise Average</h3>
+        <div style={{ color: 'hsl(220, 15%, 45%)' }}>Sign in to view monthly attendance summaries.</div>
+      </div>
+    );
+  }
+
+  const today = new Date();
+  const prevMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const year = prevMonth.getFullYear();
+  const month = prevMonth.getMonth() + 1;
+  return <SubjectSummaryCard year={year} month={month} />;
 }

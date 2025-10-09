@@ -2,6 +2,7 @@ import { UIProvider } from "./context/UIContext";
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import BackgroundScheduler from '@/app/components/BackgroundScheduler';
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,6 +19,8 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <AuthProvider>
+            {/* Run scheduler globally (works even when user not logged in) */}
+            <BackgroundScheduler />
             {children}
           </AuthProvider>
         </body>

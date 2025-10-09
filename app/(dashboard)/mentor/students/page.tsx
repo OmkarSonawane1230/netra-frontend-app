@@ -87,7 +87,9 @@ const StudentManagement: React.FC = () => {
   const webcamRef = useRef<Webcam>(null);
 
   // --- NEW: Determine if the user is a class teacher with a specific class ---
-  const isClassTeacherWithClass = user?.role === "class-teacher" && user?.assignedClass;
+  // Accept both legacy role name "class-teacher" and newer "mentor".
+  const normalizedAssignedClass = (user as any)?.assignedClass ?? (user as any)?.assigned_class ?? (user as any)?.assignedClass;
+  const isClassTeacherWithClass = (user?.role === "class-teacher" || user?.role === "mentor") && !!normalizedAssignedClass;
 
   useEffect(() => {
     if (user) {
@@ -110,7 +112,7 @@ const StudentManagement: React.FC = () => {
       );
     }
     if (isClassTeacherWithClass) {
-      filtered = filtered.filter((s) => s.student_class === user.assignedClass);
+      filtered = filtered.filter((s) => s.student_class === normalizedAssignedClass);
     }
     return filtered;
   }, [students, selectedClass, searchTerm, isClassTeacherWithClass, user]);
@@ -152,7 +154,7 @@ const StudentManagement: React.FC = () => {
     setError("");
     setSuccess("");
     if (photos.length < 3) {
-      setError("Please capture at least 3 photos.");
+      setError("Please capture 5 photos.");
       return;
     }
     const formData = new FormData();
@@ -234,7 +236,7 @@ const StudentManagement: React.FC = () => {
                 <td>{student.name}</td>
                 <td>{student.student_class}</td>
                 <td>{student.department || "Unassigned"}</td>
-                <td>{student.parent_phone || "-"}</td>
+                <td>{(student as any).parent_phone || (student as any).parent_phone_number || "-"}</td>
                 <td>
                   <div className={styles.actionButtons}>
                     <button

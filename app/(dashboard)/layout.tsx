@@ -13,6 +13,8 @@ export default function DashboardLayout({ children, }: Readonly<{
             <MainContent>
                 {children}
             </MainContent>
+
+            {/* BackgroundScheduler is mounted globally in RootLayout to avoid duplicate instances */}
         </>
     );
 }

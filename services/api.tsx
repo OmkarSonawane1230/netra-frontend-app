@@ -399,6 +399,52 @@ export const getAvailableClasses = async (): Promise<string[]> => {
   }
 };
 
+// --- Reporting API: monthly summaries and timeseries ---
+export const getMonthlySummary = async (year: number, month: number): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/api/management/attendance_summary/monthly?year=${year}&month=${month}`, { headers: getAuthHeaders() });
+    const bodyText = await response.text();
+    let jsonBody: any = null;
+    try { jsonBody = bodyText ? JSON.parse(bodyText) : null; } catch (e) { jsonBody = { detail: bodyText }; }
+    if (!response.ok) {
+      const err: any = new Error(jsonBody?.detail || `Failed to fetch monthly summary (${response.status})`);
+      err.status = response.status;
+      throw err;
+    }
+    return jsonBody;
+  } catch (error) { console.error('API Error getMonthlySummary:', error); throw error; }
+}
+
+export const getMonthlySummaryForTeacher = async (teacher: string, year: number, month: number): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/api/management/attendance_summary/monthly/teacher?teacher=${encodeURIComponent(teacher)}&year=${year}&month=${month}`, { headers: getAuthHeaders() });
+    const bodyText = await response.text();
+    let jsonBody: any = null;
+    try { jsonBody = bodyText ? JSON.parse(bodyText) : null; } catch (e) { jsonBody = { detail: bodyText }; }
+    if (!response.ok) {
+      const err: any = new Error(jsonBody?.detail || `Failed to fetch monthly summary for teacher (${response.status})`);
+      err.status = response.status;
+      throw err;
+    }
+    return jsonBody;
+  } catch (error) { console.error('API Error getMonthlySummaryForTeacher:', error); throw error; }
+}
+
+export const getSubjectTimeseries = async (year: number, month: number, subject: string): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/api/management/attendance_summary/timeseries?year=${year}&month=${month}&subject=${encodeURIComponent(subject)}`, { headers: getAuthHeaders() });
+    const bodyText = await response.text();
+    let jsonBody: any = null;
+    try { jsonBody = bodyText ? JSON.parse(bodyText) : null; } catch (e) { jsonBody = { detail: bodyText }; }
+    if (!response.ok) {
+      const err: any = new Error(jsonBody?.detail || `Failed to fetch timeseries (${response.status})`);
+      err.status = response.status;
+      throw err;
+    }
+    return jsonBody;
+  } catch (error) { console.error('API Error getSubjectTimeseries:', error); throw error; }
+}
+
 export const createHod = async (hodData: HodData): Promise<any> => {
     try {
         const response = await fetch(`${API_URL}/api/principal/hods`, {
