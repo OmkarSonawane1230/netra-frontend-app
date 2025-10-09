@@ -53,11 +53,10 @@ export default function HodPage() {
     if (!isAuthenticated) return <div style={{ padding: 24 }}>Please sign in to view HOD dashboard.</div>;
 
     return (
-        <div style={{ padding: 20 }}>
-            <h1 style={{ fontSize: 22, fontWeight: 700 }}>HOD Dashboard</h1>
+        <div>
             <p style={{ marginBottom: 12 }}>Welcome, {user?.fullName || 'HOD'} — Department: {user?.department || 'N/A'}</p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div style={{ marginInline: 'auto', display: 'flex', justifyContent: 'center', flexDirection: 'column', maxWidth: 820 }}>
                 <div>
                     <h3>My Subject Summary</h3>
                     <SubjectSummaryCard year={year} month={month} teacher={user?.fullName} />

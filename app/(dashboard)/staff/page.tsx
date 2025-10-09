@@ -12,7 +12,7 @@ export default function StaffDashboard() {
   if (!isAuthenticated) return <div style={{ padding: 24 }}>Please sign in to view your dashboard.</div>;
 
   return (
-    <div style={{ padding: 20 }}>
+    <div>
       <h2 style={{ marginBottom: 12 }}>My Monthly Subject Report ({month}/{year})</h2>
       <div style={{ maxWidth: 820 }}>
         <SubjectSummaryCard year={year} month={month} />

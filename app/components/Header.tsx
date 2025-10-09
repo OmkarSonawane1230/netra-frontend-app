@@ -13,8 +13,15 @@ export default function Header() {
         <header className={styles.header}>
             <div className={styles.headerLeft}>
                 <h1 className={styles.pageTitle}>
-                    {activeModule === 'dashboard' ? 'Dashboard Overview' :
-                        activeModule.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    {activeModule === '' ? (
+                        userRole === 'hod' ? 'HOD Dashboard'
+                        : userRole === 'principal' ? 'Principal Dashboard'
+                        : userRole === 'staff' ? 'Staff Dashboard'
+                        : userRole === 'mentor' ? 'Mentor Dashboard'
+                        : 'Dashboard Overview'
+                    ) : (
+                        activeModule.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())
+                    )}
                 </h1>
             </div>
 
