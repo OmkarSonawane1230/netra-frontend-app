@@ -155,7 +155,7 @@ const MentorAttendanceReport = () => {
                           <button className={attendanceStyles.iconButton} onClick={toggleSession} aria-label={sessCollapsed ? 'Expand session' : 'Collapse session'}>
                             {sessCollapsed ? <ChevronRight size={18} /> : <ChevronDown size={18} />}
                           </button>
-                          <button className={attendanceStyles.iconButton} onClick={loadAbsentees} disabled={sessionLoading[sessionKey]}>
+                          <button style={{paddingInline: '5px'}} className={attendanceStyles.iconButton} onClick={loadAbsentees} disabled={sessionLoading[sessionKey]}>
                             {sessionLoading[sessionKey] ? 'Loading Absentees...' : 'Load Absentees'}
                           </button>
                         </div>
